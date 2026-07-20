@@ -1,6 +1,6 @@
 {
-  const GITHUB_USER = "ks-fahad";
-  const GITHUB_REPO = "work-planner";
-  const GITHUB_FILE = "workdata.json";
-  const GITHUB_TOKEN = "github_pat_11A3Z##fad&&toMEHQ0TMwT9oqer7bM_9YJpHkOvcEHYhTCycxTpAzxFZ1M6sGltp1rixxG0xOeE4AITZTFRFi6zTRB";
+  "githubUser" : "ks-fahad",
+  "githubRepo" : "work-planner",
+  "githubFile" : "workdata.json",
+  "githubToken" : "github_pat_11A3Z##fad&&toMEHQ0TMwT9oqer7bM_9YJpHkOvcEHYhTCycxTpAzxFZ1M6sGltp1rixxG0xOeE4AITZTFRFi6zTRB"
 }
