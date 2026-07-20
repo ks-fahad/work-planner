@@ -10,82 +10,93 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
-
 <style>
 
 body{
     font-family:Arial, sans-serif;
-    background:#f2f2f2;
+    background:#f1f3f5;
+    margin:0;
     padding:20px;
 }
 
 
 .container{
-
-    max-width:900px;
+    max-width:1100px;
     margin:auto;
     background:white;
     padding:25px;
-    border-radius:10px;
-
+    border-radius:12px;
+    box-shadow:0 0 10px #ccc;
 }
 
 
 h1,h2{
-
     text-align:center;
-
-}
-
-
-.input-group{
-
-    margin-bottom:15px;
-
-}
-
-
-label{
-
-    display:block;
-    font-weight:bold;
-    margin-bottom:5px;
-
 }
 
 
 input,select,button{
-
     width:100%;
     padding:10px;
+    margin-top:6px;
+    margin-bottom:12px;
     box-sizing:border-box;
-
 }
 
 
 button{
-
-    margin-top:10px;
     background:#0066cc;
     color:white;
     border:none;
     border-radius:5px;
     cursor:pointer;
-
 }
 
 
 button:hover{
-
     background:#004999;
+}
 
+
+.secondary{
+    background:#666;
+}
+
+
+.danger{
+    background:#cc0000;
+}
+
+
+.success{
+    background:#d4edda;
+    color:#155724;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:5px;
+}
+
+
+.error{
+    background:#f8d7da;
+    color:#721c24;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:5px;
+}
+
+
+.warning{
+    background:#fff3cd;
+    color:#856404;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:5px;
 }
 
 
 .hidden{
-
     display:none;
-
 }
 
 
@@ -117,19 +128,26 @@ th{
 
 .card{
 
-    background:#eee;
+    border:1px solid #ddd;
     padding:15px;
-    border-radius:5px;
-    margin-top:20px;
+    margin-top:15px;
+    border-radius:8px;
 
 }
 
+
+.small-btn{
+
+    width:auto;
+    padding:6px 10px;
+    margin:2px;
+
+}
 
 </style>
 
 
 </head>
-
 
 
 <body>
@@ -142,16 +160,21 @@ th{
 
 
 
-<!-- PASSWORD SECTION -->
+<!-- MESSAGE AREA -->
+
+<div id="message"></div>
+
+
+
+
+<!-- LOGIN -->
 
 
 <div id="loginBox" class="card">
 
 
-<h2>Password</h2>
+<h2>Open Database</h2>
 
-
-<div class="input-group">
 
 <label>
 Encryption Password
@@ -160,13 +183,11 @@ Encryption Password
 <input 
 type="password"
 id="passwordInput"
-placeholder="Enter password">
-
-</div>
+placeholder="Password">
 
 
 <button onclick="login()">
-Open Planner
+Open
 </button>
 
 
@@ -176,73 +197,46 @@ Open Planner
 
 
 
-<!-- MAIN APP -->
+<!-- APPLICATION -->
 
 
 <div id="app" class="hidden">
 
 
-
-<h2>Add Work</h2>
-
+<h2>Work Entry</h2>
 
 
-<div class="input-group">
 
-<label>
-Date
-</label>
+<div class="card">
+
+
+<label>Date</label>
 
 <input 
 type="date"
 id="date">
 
-</div>
 
 
-
-
-
-<div class="input-group">
-
-<label>
-Start Time
-</label>
+<label>Start Time</label>
 
 <input 
 type="time"
 id="start">
 
-</div>
 
 
-
-
-
-<div class="input-group">
-
-<label>
-End Time
-</label>
+<label>Finish Time</label>
 
 <input 
 type="time"
 id="finish">
 
-</div>
 
 
+<label>Break?</label>
 
-
-
-<div class="input-group">
-
-<label>
-Do you have a break?
-</label>
-
-
-<select id="hasBreak" onchange="showBreakInputs()">
+<select id="hasBreak" onchange="toggleBreak()">
 
 <option value="no">
 No
@@ -252,19 +246,13 @@ No
 Yes
 </option>
 
-
 </select>
 
-</div>
 
 
 
+<div id="breakArea" class="hidden">
 
-
-<div id="breakBox" class="hidden">
-
-
-<div class="input-group">
 
 <label>
 Break Start
@@ -274,12 +262,6 @@ Break Start
 type="time"
 id="breakStart">
 
-</div>
-
-
-
-
-<div class="input-group">
 
 <label>
 Break End
@@ -289,29 +271,24 @@ Break End
 type="time"
 id="breakEnd">
 
-</div>
-
-
 
 </div>
 
 
 
 
-
-<button onclick="saveRecord()">
-
-Add / Update
-
+<button onclick="saveRecord()" id="saveButton">
+Add Record
 </button>
 
 
-
-<button onclick="clearForm()">
-
+<button onclick="clearForm()" class="secondary">
 Clear
-
 </button>
+
+
+
+</div>
 
 
 
@@ -320,21 +297,21 @@ Clear
 <h2>Monthly Report</h2>
 
 
+<div class="card">
 
-<div class="input-group">
 
 <label>
 Select Month
 </label>
 
 
-<select id="monthSelect"
-onchange="showMonth()">
+<select id="monthSelect" onchange="showMonth()">
 
 </select>
 
 
 </div>
+
 
 
 
@@ -346,23 +323,26 @@ onchange="showMonth()">
 
 <tr>
 
+<th>No.</th>
 <th>Date</th>
 <th>Start</th>
 <th>Finish</th>
 <th>Break Start</th>
 <th>Break End</th>
-<th>Break</th>
+<th>Break Time</th>
 <th>Type</th>
-<th>Total</th>
+<th>Total Hours</th>
 <th>Action</th>
 
 
 </tr>
 
+
 </thead>
 
 
 <tbody id="reportBody">
+
 
 </tbody>
 
@@ -371,10 +351,16 @@ onchange="showMonth()">
 
 
 
-
 <div class="card" id="summary">
 
+
 </div>
+
+
+
+<button onclick="saveToGitHub()">
+Save To GitHub
+</button>
 
 
 
@@ -391,6 +377,11 @@ onchange="showMonth()">
 <script>
 
 
+// ===========================
+// GLOBAL VARIABLES
+// ===========================
+
+
 let password="";
 
 let records=[];
@@ -398,10 +389,956 @@ let records=[];
 let editIndex=-1;
 
 
+// GitHub settings
+const GITHUB_USER="ks-fahad";
+const GITHUB_REPO="https://github.com/ks-fahad/work-planner.git";
+const GITHUB_FILE="workdata.json";
 
-/*
-LOGIN
-*/
+const GITHUB_TOKEN="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";
+
+
+
+// ===========================
+// TIME FUNCTIONS
+// ===========================
+
+
+function toMinutes(time){
+
+let p=time.split(":");
+
+return Number(p[0])*60 + Number(p[1]);
+
+}
+
+
+
+function formatMinutes(minutes){
+
+let h=Math.floor(minutes/60);
+
+let m=minutes%60;
+
+return h+"h "+m+"m";
+
+}
+
+
+
+
+// ===========================
+// CALCULATE WORK HOURS
+// ===========================
+
+
+function calculateWork(){
+
+let start=document.getElementById("start").value;
+
+let finish=document.getElementById("finish").value;
+
+
+if(!start || !finish){
+
+return null;
+
+}
+
+
+let total=toMinutes(finish)-toMinutes(start);
+
+
+if(total<0){
+
+total+=1440;
+
+}
+
+
+let breakMinutes=0;
+
+let breakType="None";
+
+
+let hasBreak=document.getElementById("hasBreak").value;
+
+
+
+if(hasBreak=="yes"){
+
+
+let bs=document.getElementById("breakStart").value;
+
+let be=document.getElementById("breakEnd").value;
+
+
+if(bs && be){
+
+
+breakMinutes=
+toMinutes(be)-toMinutes(bs);
+
+
+
+if(breakMinutes<0){
+
+breakMinutes+=1440;
+
+}
+
+
+breakType="Manual";
+
+
+}
+
+
+
+}
+else if(total>360){
+
+
+breakMinutes=30;
+
+breakType="Automatic";
+
+
+}
+
+
+
+return {
+
+total:total-breakMinutes,
+
+breakMinutes:breakMinutes,
+
+breakType:breakType
+
+};
+
+
+}
+
+
+
+
+
+// ===========================
+// SAVE RECORD
+// ===========================
+
+
+function saveRecord(){
+
+
+
+let date=document.getElementById("date").value;
+
+
+let start=document.getElementById("start").value;
+
+
+let finish=document.getElementById("finish").value;
+
+
+
+if(!date || !start || !finish){
+
+
+showMessage(
+"Date, start and finish are required",
+"error"
+);
+
+
+return;
+
+
+}
+
+
+
+let result=calculateWork();
+
+
+
+if(!result){
+
+showMessage(
+"Cannot calculate hours",
+"error"
+);
+
+return;
+
+}
+
+
+
+
+
+// CHECK DUPLICATE DATE
+
+
+let existing=records.findIndex(r=>{
+
+
+return decrypt(r.date)==date;
+
+
+});
+
+
+
+
+
+if(existing>=0 && editIndex==-1){
+
+
+
+let old=records[existing];
+
+
+let oldText=
+
+`
+Existing data found:
+
+Date:
+${decrypt(old.date)}
+
+Start:
+${decrypt(old.start)}
+
+Finish:
+${decrypt(old.finish)}
+
+Break:
+${decrypt(old.breakStart)}
+-
+${decrypt(old.breakEnd)}
+
+Total:
+${formatMinutes(
+Number(
+decrypt(old.totalMinutes)
+)
+)}
+
+Do you want to update?
+`;
+
+
+
+let answer=confirm(oldText);
+
+
+
+if(!answer){
+
+
+showMessage(
+"Update cancelled",
+"warning"
+);
+
+
+return;
+
+
+}
+
+
+editIndex=existing;
+
+
+
+}
+
+
+
+
+
+
+let record={
+
+
+date:encrypt(date),
+
+start:encrypt(start),
+
+finish:encrypt(finish),
+
+
+breakStart:encrypt(
+document.getElementById("breakStart").value
+),
+
+
+breakEnd:encrypt(
+document.getElementById("breakEnd").value
+),
+
+
+breakMinutes:encrypt(
+result.breakMinutes
+),
+
+
+breakType:encrypt(
+result.breakType
+),
+
+
+totalMinutes:encrypt(
+result.total
+)
+
+
+
+};
+
+
+
+
+
+
+if(editIndex>=0){
+
+
+records[editIndex]=record;
+
+
+showMessage(
+"Updated successfully"
+);
+
+
+}
+else{
+
+
+records.push(record);
+
+
+showMessage(
+"Saved successfully"
+);
+
+
+}
+
+
+
+
+clearForm();
+
+
+loadMonths();
+
+
+showMonth();
+
+
+
+}
+
+
+
+
+// ===========================
+// LOAD MONTH LIST
+// ===========================
+
+
+function loadMonths(){
+
+
+let select=document.getElementById(
+"monthSelect"
+);
+
+
+select.innerHTML="";
+
+
+
+let months=[];
+
+
+
+records.forEach(r=>{
+
+
+let date=decrypt(r.date);
+
+
+let month=date.substring(0,7);
+
+
+
+if(!months.includes(month)){
+
+
+months.push(month);
+
+
+}
+
+
+
+});
+
+
+
+months.forEach(m=>{
+
+
+let option=document.createElement("option");
+
+
+option.value=m;
+
+
+option.innerHTML=m;
+
+
+select.appendChild(option);
+
+
+
+});
+
+
+}
+
+
+
+
+
+// ===========================
+// EDIT RECORD
+// ===========================
+
+
+function editRecord(index){
+
+
+let r=records[index];
+
+
+
+editIndex=index;
+
+
+
+document.getElementById(
+"saveButton"
+).innerHTML="Update Record";
+
+
+
+document.getElementById("date").value=
+decrypt(r.date);
+
+
+document.getElementById("start").value=
+decrypt(r.start);
+
+
+document.getElementById("finish").value=
+decrypt(r.finish);
+
+
+
+let bs=decrypt(r.breakStart);
+
+let be=decrypt(r.breakEnd);
+
+
+
+if(bs && be){
+
+
+document.getElementById("hasBreak").value="yes";
+
+
+toggleBreak();
+
+
+document.getElementById("breakStart").value=bs;
+
+
+document.getElementById("breakEnd").value=be;
+
+
+
+}
+else{
+
+
+document.getElementById("hasBreak").value="no";
+
+
+toggleBreak();
+
+
+}
+
+
+
+showMessage(
+"Editing selected record",
+"warning"
+);
+
+
+}
+
+
+
+
+
+// ===========================
+// DELETE RECORD
+// ===========================
+
+
+function deleteRecord(index){
+
+
+
+let r=records[index];
+
+
+
+let ok=confirm(
+
+"Delete this record?\n\n"+
+decrypt(r.date)+
+"\n"+
+decrypt(r.start)+
+" - "+
+decrypt(r.finish)
+
+);
+
+
+
+if(!ok){
+
+
+showMessage(
+"Delete cancelled",
+"warning"
+);
+
+
+return;
+
+
+}
+
+
+
+records.splice(index,1);
+
+
+
+showMonth();
+
+
+loadMonths();
+
+
+
+showMessage(
+"Deleted successfully"
+);
+
+
+
+}
+
+
+
+
+// ===========================
+// SHOW MONTH REPORT
+// ===========================
+
+
+function showMonth(){
+
+
+let month=document.getElementById(
+"monthSelect"
+).value;
+
+
+
+let body=document.getElementById(
+"reportBody"
+);
+
+
+
+body.innerHTML="";
+
+
+
+let totalHours=0;
+
+let totalBreak=0;
+
+let count=0;
+
+
+
+records.forEach((r,index)=>{
+
+
+
+let date=decrypt(r.date);
+
+
+
+if(date.startsWith(month)){
+
+
+
+count++;
+
+
+
+let start=decrypt(r.start);
+
+let finish=decrypt(r.finish);
+
+
+let bs=decrypt(r.breakStart);
+
+let be=decrypt(r.breakEnd);
+
+
+
+let breakMinutes=Number(
+decrypt(r.breakMinutes)
+);
+
+
+
+let breakType=decrypt(
+r.breakType
+);
+
+
+
+let worked=Number(
+decrypt(r.totalMinutes)
+);
+
+
+
+let row=body.insertRow();
+
+
+
+row.insertCell(0).innerHTML=count;
+
+
+row.insertCell(1).innerHTML=date;
+
+
+row.insertCell(2).innerHTML=start;
+
+
+row.insertCell(3).innerHTML=finish;
+
+
+row.insertCell(4).innerHTML=bs || "-";
+
+
+row.insertCell(5).innerHTML=be || "-";
+
+
+row.insertCell(6).innerHTML=
+formatMinutes(breakMinutes);
+
+
+row.insertCell(7).innerHTML=
+breakType;
+
+
+row.insertCell(8).innerHTML=
+formatMinutes(worked);
+
+
+
+
+
+let action=row.insertCell(9);
+
+
+
+action.innerHTML=
+
+`
+<button class="small-btn"
+onclick="editRecord(${index})">
+Edit
+</button>
+
+<button class="small-btn danger"
+onclick="deleteRecord(${index})">
+Delete
+</button>
+
+`;
+
+
+
+totalHours+=worked;
+
+
+totalBreak+=breakMinutes;
+
+
+
+}
+
+
+
+});
+
+
+
+
+
+document.getElementById(
+"summary"
+).innerHTML=
+
+`
+<b>Monthly Summary</b>
+<br>
+Working Days:
+${count}
+
+<br>
+
+Total Work Hours:
+${formatMinutes(totalHours)}
+
+<br>
+
+Total Break:
+${formatMinutes(totalBreak)}
+
+`;
+
+
+
+}
+
+
+
+
+
+// ===========================
+// PREPARE ENCRYPTED JSON
+// ===========================
+
+
+function encryptedJSON(){
+
+
+return JSON.stringify(
+records,
+null,
+2
+);
+
+
+}
+
+
+
+
+
+
+// ===========================
+// GITHUB SAVE
+// ===========================
+
+
+
+async function saveToGitHub(){
+
+
+
+const url=
+
+`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
+
+
+
+let sha="";
+
+
+
+// GET CURRENT FILE SHA
+
+
+let old=await fetch(url,{
+
+headers:{
+
+"Authorization":
+"Bearer "+GITHUB_TOKEN
+
+}
+
+
+});
+
+
+
+if(old.ok){
+
+
+let oldData=await old.json();
+
+
+sha=oldData.sha;
+
+
+}
+
+
+
+
+
+
+let content=btoa(
+unescape(
+encodeURIComponent(
+encryptedJSON()
+)
+)
+);
+
+
+
+
+
+
+let response=await fetch(url,{
+
+
+method:"PUT",
+
+
+headers:{
+
+
+"Authorization":
+"Bearer "+GITHUB_TOKEN,
+
+
+"Content-Type":
+"application/json"
+
+
+},
+
+
+
+body:JSON.stringify({
+
+
+message:
+"Update work planner data",
+
+
+content:content,
+
+
+sha:sha
+
+
+})
+
+
+
+});
+
+
+
+
+
+if(response.ok){
+
+
+showMessage(
+"Saved to GitHub successfully"
+);
+
+
+}
+
+else{
+
+
+showMessage(
+"GitHub save failed",
+"error"
+);
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+// ===========================
+// MESSAGE SYSTEM
+// ===========================
+
+
+function showMessage(text,type="success"){
+
+let box=document.getElementById("message");
+
+box.innerHTML=text;
+
+box.className=type;
+
+
+setTimeout(()=>{
+
+box.innerHTML="";
+box.className="";
+
+},4000);
+
+
+}
+
+
+
+
+
+// ===========================
+// LOGIN
+// ===========================
 
 
 function login(){
@@ -412,18 +1349,23 @@ password=document.getElementById(
 ).value;
 
 
+
 if(password==""){
 
-alert("Enter password");
+showMessage(
+"Password required",
+"error"
+);
 
 return;
 
 }
 
 
+
 document.getElementById(
 "loginBox"
-).style.display="none";
+).classList.add("hidden");
 
 
 document.getElementById(
@@ -441,22 +1383,17 @@ loadData();
 
 
 
-/*
-ENCRYPTION
-*/
+// ===========================
+// ENCRYPTION
+// ===========================
 
 
 function encrypt(value){
 
-
 return CryptoJS.AES.encrypt(
-
 String(value),
-
 password
-
 ).toString();
-
 
 }
 
@@ -464,17 +1401,13 @@ password
 
 function decrypt(value){
 
-
 try{
 
-
 return CryptoJS.AES.decrypt(
-
 value,
-
 password
-
-).toString(
+)
+.toString(
 CryptoJS.enc.Utf8
 );
 
@@ -487,24 +1420,23 @@ return "";
 
 }
 
-
 }
 
 
 
 
 
-/*
-LOAD JSON
-*/
+// ===========================
+// LOAD JSON
+// ===========================
 
 
 function loadData(){
 
 
-fetch("workdata.json")
+fetch(GITHUB_FILE)
 
-.then(response=>response.json())
+.then(r=>r.json())
 
 .then(data=>{
 
@@ -514,16 +1446,28 @@ records=data;
 
 loadMonths();
 
-
 showMonth();
 
 
+
+showMessage(
+"Database loaded successfully"
+);
+
+
 })
+
 
 .catch(()=>{
 
 
 records=[];
+
+
+showMessage(
+"New database created",
+"warning"
+);
 
 
 });
@@ -534,9 +1478,12 @@ records=[];
 
 
 
+// ===========================
+// BREAK DISPLAY
+// ===========================
 
 
-function showBreakInputs(){
+function toggleBreak(){
 
 
 let value=document.getElementById(
@@ -547,11 +1494,9 @@ let value=document.getElementById(
 
 if(value=="yes"){
 
-
 document.getElementById(
-"breakBox"
+"breakArea"
 ).classList.remove("hidden");
-
 
 }
 
@@ -559,7 +1504,7 @@ else{
 
 
 document.getElementById(
-"breakBox"
+"breakArea"
 ).classList.add("hidden");
 
 
@@ -571,11 +1516,20 @@ document.getElementById(
 
 
 
+// ===========================
+// CLEAR FORM
+// ===========================
+
 
 function clearForm(){
 
 
 editIndex=-1;
+
+
+document.getElementById(
+"saveButton"
+).innerHTML="Add Record";
 
 
 document.getElementById("date").value="";
@@ -588,10 +1542,19 @@ document.getElementById("breakStart").value="";
 
 document.getElementById("breakEnd").value="";
 
+document.getElementById("hasBreak").value="no";
+
+
+toggleBreak();
+
+
+showMessage(
+"Form cleared",
+"warning"
+);
+
 
 }
-
-
 
 
 
