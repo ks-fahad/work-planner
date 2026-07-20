@@ -391,7 +391,7 @@ let editIndex=-1;
 
 // GitHub settings
 const GITHUB_USER="ks-fahad";
-const GITHUB_REPO="https://github.com/ks-fahad/work-planner.git";
+const GITHUB_REPO="work-planner";
 const GITHUB_FILE="workdata.json";
 
 const GITHUB_TOKEN="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";
@@ -754,62 +754,63 @@ showMonth();
 
 function loadMonths(){
 
+    let select=document.getElementById("monthSelect");
 
-let select=document.getElementById(
-"monthSelect"
-);
+    select.innerHTML="";
 
-
-select.innerHTML="";
+    let months=[];
 
 
+    records.forEach(r=>{
 
-let months=[];
+        let date=decrypt(r.date);
 
-
-
-records.forEach(r=>{
-
-
-let date=decrypt(r.date);
+        let month=date.substring(0,7);
 
 
-let month=date.substring(0,7);
+        if(!months.includes(month)){
+            months.push(month);
+        }
+
+    });
 
 
 
-if(!months.includes(month)){
+    months.forEach(m=>{
 
 
-months.push(month);
+        let parts=m.split("-");
+
+        let year=parts[0];
+
+        let monthNumber=Number(parts[1]);
 
 
-}
+        let monthName=new Date(
+            year,
+            monthNumber-1,
+            1
+        ).toLocaleString(
+            "default",
+            {
+                month:"long"
+            }
+        );
 
 
-
-});
-
+        let option=document.createElement("option");
 
 
-months.forEach(m=>{
+        option.value=m;
+
+        option.innerHTML=
+            monthName+" "+year;
 
 
-let option=document.createElement("option");
+        select.appendChild(option);
 
 
-option.value=m;
-
-
-option.innerHTML=m;
-
-
-select.appendChild(option);
-
-
-
-});
-
+    });
 
 }
 
