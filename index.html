@@ -1,59 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Encrypted Work Planner</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
+
 <style>
 
 body{
-    font-family:Arial;
+    font-family:Arial, sans-serif;
     background:#f2f2f2;
-    padding:30px;
+    padding:20px;
 }
+
 
 .container{
-    max-width:1200px;
+
+    max-width:900px;
     margin:auto;
     background:white;
-    padding:20px;
+    padding:25px;
     border-radius:10px;
+
 }
 
-input,button,select{
-    padding:8px;
-    margin:5px;
+
+h1,h2{
+
+    text-align:center;
+
 }
+
+
+.input-group{
+
+    margin-bottom:15px;
+
+}
+
+
+label{
+
+    display:block;
+    font-weight:bold;
+    margin-bottom:5px;
+
+}
+
+
+input,select,button{
+
+    width:100%;
+    padding:10px;
+    box-sizing:border-box;
+
+}
+
 
 button{
+
+    margin-top:10px;
     background:#0066cc;
     color:white;
-    border:0;
+    border:none;
     border-radius:5px;
+    cursor:pointer;
+
 }
 
+
+button:hover{
+
+    background:#004999;
+
+}
+
+
+.hidden{
+
+    display:none;
+
+}
+
+
 table{
+
     width:100%;
     border-collapse:collapse;
     margin-top:20px;
+
 }
 
-td,th{
+
+th,td{
+
     border:1px solid #ccc;
     padding:8px;
     text-align:center;
+
 }
 
+
 th{
+
     background:#0066cc;
     color:white;
+
 }
+
+
+.card{
+
+    background:#eee;
+    padding:15px;
+    border-radius:5px;
+    margin-top:20px;
+
+}
+
 
 </style>
 
+
 </head>
+
 
 
 <body>
@@ -62,46 +138,205 @@ th{
 <div class="container">
 
 
-<h2>Encrypted Work Planner</h2>
+<h1>Encrypted Work Planner</h1>
 
 
-<button onclick="addWork()">Add Work Day</button>
 
-<button onclick="downloadEncrypted()">Export Encrypted Data</button>
-
-
-<br>
+<!-- PASSWORD SECTION -->
 
 
-Date:
-<input type="date" id="date">
+<div id="loginBox" class="card">
 
 
-Start:
-<input type="time" id="start">
+<h2>Password</h2>
 
 
-Finish:
-<input type="time" id="finish">
+<div class="input-group">
+
+<label>
+Encryption Password
+</label>
+
+<input 
+type="password"
+id="passwordInput"
+placeholder="Enter password">
+
+</div>
 
 
-<br>
+<button onclick="login()">
+Open Planner
+</button>
 
 
-Break Start:
-<input type="time" id="breakStart">
+</div>
 
 
-Break End:
-<input type="time" id="breakEnd">
 
 
-<br><br>
+
+<!-- MAIN APP -->
 
 
-Month:
+<div id="app" class="hidden">
 
-<select id="month" onchange="showMonth()"></select>
+
+
+<h2>Add Work</h2>
+
+
+
+<div class="input-group">
+
+<label>
+Date
+</label>
+
+<input 
+type="date"
+id="date">
+
+</div>
+
+
+
+
+
+<div class="input-group">
+
+<label>
+Start Time
+</label>
+
+<input 
+type="time"
+id="start">
+
+</div>
+
+
+
+
+
+<div class="input-group">
+
+<label>
+End Time
+</label>
+
+<input 
+type="time"
+id="finish">
+
+</div>
+
+
+
+
+
+<div class="input-group">
+
+<label>
+Do you have a break?
+</label>
+
+
+<select id="hasBreak" onchange="showBreakInputs()">
+
+<option value="no">
+No
+</option>
+
+<option value="yes">
+Yes
+</option>
+
+
+</select>
+
+</div>
+
+
+
+
+
+<div id="breakBox" class="hidden">
+
+
+<div class="input-group">
+
+<label>
+Break Start
+</label>
+
+<input 
+type="time"
+id="breakStart">
+
+</div>
+
+
+
+
+<div class="input-group">
+
+<label>
+Break End
+</label>
+
+<input 
+type="time"
+id="breakEnd">
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<button onclick="saveRecord()">
+
+Add / Update
+
+</button>
+
+
+
+<button onclick="clearForm()">
+
+Clear
+
+</button>
+
+
+
+
+
+<h2>Monthly Report</h2>
+
+
+
+<div class="input-group">
+
+<label>
+Select Month
+</label>
+
+
+<select id="monthSelect"
+onchange="showMonth()">
+
+</select>
+
+
+</div>
+
+
 
 
 <table>
@@ -116,25 +351,40 @@ Month:
 <th>Finish</th>
 <th>Break Start</th>
 <th>Break End</th>
-<th>Break Time</th>
+<th>Break</th>
 <th>Type</th>
-<th>Hours</th>
+<th>Total</th>
+<th>Action</th>
+
 
 </tr>
 
 </thead>
 
 
-<tbody id="report"></tbody>
+<tbody id="reportBody">
+
+</tbody>
 
 
 </table>
 
 
-<h3 id="summary"></h3>
+
+
+<div class="card" id="summary">
+
+</div>
+
 
 
 </div>
+
+
+
+</div>
+
+
 
 
 
@@ -145,18 +395,68 @@ let password="";
 
 let records=[];
 
+let editIndex=-1;
 
 
-password=prompt("Enter encryption password:");
 
+/*
+LOGIN
+*/
+
+
+function login(){
+
+
+password=document.getElementById(
+"passwordInput"
+).value;
+
+
+if(password==""){
+
+alert("Enter password");
+
+return;
+
+}
+
+
+document.getElementById(
+"loginBox"
+).style.display="none";
+
+
+document.getElementById(
+"app"
+).classList.remove("hidden");
+
+
+
+loadData();
+
+
+}
+
+
+
+
+
+/*
+ENCRYPTION
+*/
 
 
 function encrypt(value){
 
+
 return CryptoJS.AES.encrypt(
+
 String(value),
+
 password
+
 ).toString();
+
 
 }
 
@@ -164,21 +464,47 @@ password
 
 function decrypt(value){
 
+
+try{
+
+
 return CryptoJS.AES.decrypt(
+
 value,
+
 password
+
 ).toString(
 CryptoJS.enc.Utf8
 );
+
+
+}
+
+catch(e){
+
+return "";
+
+}
+
 
 }
 
 
 
 
+
+/*
+LOAD JSON
+*/
+
+
+function loadData(){
+
+
 fetch("workdata.json")
 
-.then(r=>r.json())
+.then(response=>response.json())
 
 .then(data=>{
 
@@ -188,201 +514,16 @@ records=data;
 
 loadMonths();
 
-showMonth();
-
-
-});
-
-
-
-
-
-
-function minutes(t){
-
-let p=t.split(":");
-
-return Number(p[0])*60+Number(p[1]);
-
-}
-
-
-
-
-
-function formatTime(m){
-
-let h=Math.floor(m/60);
-
-let min=m%60;
-
-
-return h+"h "+min+"m";
-
-}
-
-
-
-
-
-function addWork(){
-
-
-
-let date=document.getElementById("date").value;
-
-let start=document.getElementById("start").value;
-
-let finish=document.getElementById("finish").value;
-
-
-let breakStart=document.getElementById("breakStart").value;
-
-let breakEnd=document.getElementById("breakEnd").value;
-
-
-
-if(!date || !start || !finish){
-
-alert("Fill date, start and finish");
-
-return;
-
-}
-
-
-
-let total=minutes(finish)-minutes(start);
-
-
-if(total<0){
-
-total+=1440;
-
-}
-
-
-
-let breakMinutes=0;
-
-let type="none";
-
-
-
-if(breakStart && breakEnd){
-
-
-breakMinutes=minutes(breakEnd)-minutes(breakStart);
-
-
-if(breakMinutes<0){
-
-breakMinutes+=1440;
-
-}
-
-
-type="manual";
-
-
-}
-
-else if(total>360){
-
-
-breakMinutes=30;
-
-type="automatic";
-
-
-}
-
-
-
-let worked=total-breakMinutes;
-
-
-
-
-records.push({
-
-
-date:encrypt(date),
-
-start:encrypt(start),
-
-finish:encrypt(finish),
-
-
-breakStart:encrypt(breakStart || ""),
-
-breakEnd:encrypt(breakEnd || ""),
-
-
-breakMinutes:encrypt(breakMinutes),
-
-breakType:encrypt(type),
-
-totalMinutes:encrypt(worked)
-
-
-
-});
-
-
-
-loadMonths();
 
 showMonth();
 
 
-}
+})
+
+.catch(()=>{
 
 
-
-
-
-
-
-function loadMonths(){
-
-
-let select=document.getElementById("month");
-
-
-select.innerHTML="";
-
-
-
-let months=[];
-
-
-records.forEach(r=>{
-
-let d=decrypt(r.date);
-
-let m=d.substring(0,7);
-
-
-if(!months.includes(m))
-months.push(m);
-
-
-});
-
-
-
-months.forEach(m=>{
-
-
-let option=document.createElement("option");
-
-option.value=m;
-
-option.text=m;
-
-
-select.appendChild(option);
+records=[];
 
 
 });
@@ -395,102 +536,34 @@ select.appendChild(option);
 
 
 
-function showMonth(){
+function showBreakInputs(){
 
 
-let month=document.getElementById("month").value;
-
-
-let body=document.getElementById("report");
-
-
-body.innerHTML="";
-
-
-let total=0;
-
-let breaks=0;
-
-let days=0;
+let value=document.getElementById(
+"hasBreak"
+).value;
 
 
 
-records.forEach(r=>{
+if(value=="yes"){
 
 
-let date=decrypt(r.date);
-
-
-
-if(date.startsWith(month)){
-
-
-let start=decrypt(r.start);
-
-let finish=decrypt(r.finish);
-
-let bs=decrypt(r.breakStart);
-
-let be=decrypt(r.breakEnd);
-
-
-let bm=Number(
-decrypt(r.breakMinutes)
-);
-
-
-let type=decrypt(r.breakType);
-
-
-let hours=Number(
-decrypt(r.totalMinutes)
-);
-
-
-
-let row=body.insertRow();
-
-
-row.insertCell(0).innerHTML=date;
-
-row.insertCell(1).innerHTML=start;
-
-row.insertCell(2).innerHTML=finish;
-
-row.insertCell(3).innerHTML=bs || "-";
-
-row.insertCell(4).innerHTML=be || "-";
-
-row.insertCell(5).innerHTML=formatTime(bm);
-
-row.insertCell(6).innerHTML=type;
-
-row.insertCell(7).innerHTML=formatTime(hours);
-
-
-
-total+=hours;
-
-breaks+=bm;
-
-days++;
-
+document.getElementById(
+"breakBox"
+).classList.remove("hidden");
 
 
 }
 
+else{
 
 
-});
+document.getElementById(
+"breakBox"
+).classList.add("hidden");
 
 
-
-document.getElementById("summary").innerHTML=
-
-"Days: "+days+
-" | Worked: "+formatTime(total)+
-" | Break: "+formatTime(breaks);
-
+}
 
 
 }
@@ -499,39 +572,26 @@ document.getElementById("summary").innerHTML=
 
 
 
+function clearForm(){
 
 
-function downloadEncrypted(){
+editIndex=-1;
 
 
-let file=new Blob(
+document.getElementById("date").value="";
 
-[
-JSON.stringify(records,null,2)
-],
+document.getElementById("start").value="";
 
-{
-type:"application/json"
-}
+document.getElementById("finish").value="";
 
-);
+document.getElementById("breakStart").value="";
 
-
-
-let a=document.createElement("a");
-
-
-a.href=URL.createObjectURL(file);
-
-
-a.download="workdata.json";
-
-
-a.click();
-
+document.getElementById("breakEnd").value="";
 
 
 }
+
+
 
 
 
@@ -539,4 +599,5 @@ a.click();
 
 
 </body>
+
 </html>
