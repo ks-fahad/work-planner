@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Work Planner</title>
+
+<title>Encrypted Work Planner</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
 <style>
+
 body{
     font-family:Arial;
-    background:#f4f4f4;
+    background:#f2f2f2;
     padding:30px;
 }
 
 .container{
+    max-width:1200px;
+    margin:auto;
     background:white;
     padding:20px;
     border-radius:10px;
-    max-width:1200px;
-    margin:auto;
 }
 
 input,button,select{
@@ -28,7 +32,6 @@ button{
     color:white;
     border:0;
     border-radius:5px;
-    cursor:pointer;
 }
 
 table{
@@ -37,7 +40,7 @@ table{
     margin-top:20px;
 }
 
-th,td{
+td,th{
     border:1px solid #ccc;
     padding:8px;
     text-align:center;
@@ -48,26 +51,35 @@ th{
     color:white;
 }
 
-.summary{
-    margin-top:20px;
-    font-size:18px;
-}
 </style>
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
-<h2>Work Planner</h2>
+
+<h2>Encrypted Work Planner</h2>
+
+
+<button onclick="addWork()">Add Work Day</button>
+
+<button onclick="downloadEncrypted()">Export Encrypted Data</button>
+
+
+<br>
 
 
 Date:
 <input type="date" id="date">
 
+
 Start:
 <input type="time" id="start">
+
 
 Finish:
 <input type="time" id="finish">
@@ -75,160 +87,252 @@ Finish:
 
 <br>
 
-Break start:
+
+Break Start:
 <input type="time" id="breakStart">
 
-Break end:
+
+Break End:
 <input type="time" id="breakEnd">
 
 
-<br>
-
-<button onclick="addWork()">Add Day</button>
-
-<button onclick="downloadJSON()">Export JSON</button>
+<br><br>
 
 
-<h3>Monthly Report</h3>
+Month:
 
-<select id="month" onchange="showMonth()">
-</select>
+<select id="month" onchange="showMonth()"></select>
 
 
 <table>
 
+
 <thead>
+
 <tr>
+
 <th>Date</th>
 <th>Start</th>
 <th>Finish</th>
 <th>Break Start</th>
 <th>Break End</th>
 <th>Break Time</th>
-<th>Break Type</th>
-<th>Total Hours</th>
+<th>Type</th>
+<th>Hours</th>
+
 </tr>
+
 </thead>
 
+
 <tbody id="report"></tbody>
+
 
 </table>
 
 
-<div class="summary" id="summary"></div>
+<h3 id="summary"></h3>
 
 
 </div>
 
 
+
 <script>
 
+
+let password="";
 
 let records=[];
 
 
 
+password=prompt("Enter encryption password:");
+
+
+
+function encrypt(value){
+
+return CryptoJS.AES.encrypt(
+String(value),
+password
+).toString();
+
+}
+
+
+
+function decrypt(value){
+
+return CryptoJS.AES.decrypt(
+value,
+password
+).toString(
+CryptoJS.enc.Utf8
+);
+
+}
+
+
+
+
 fetch("workdata.json")
+
 .then(r=>r.json())
+
 .then(data=>{
-    records=data;
-    loadMonths();
-    showMonth();
+
+
+records=data;
+
+
+loadMonths();
+
+showMonth();
+
+
 });
 
 
 
-function timeMinutes(t){
 
-    let x=t.split(":");
 
-    return Number(x[0])*60+Number(x[1]);
+
+function minutes(t){
+
+let p=t.split(":");
+
+return Number(p[0])*60+Number(p[1]);
+
+}
+
+
+
+
+
+function formatTime(m){
+
+let h=Math.floor(m/60);
+
+let min=m%60;
+
+
+return h+"h "+min+"m";
 
 }
 
 
-
-function formatHours(min){
-
-    let h=Math.floor(min/60);
-    let m=min%60;
-
-    return h+"h "+m+"m";
-
-}
 
 
 
 function addWork(){
 
 
+
 let date=document.getElementById("date").value;
+
 let start=document.getElementById("start").value;
+
 let finish=document.getElementById("finish").value;
 
-let bs=document.getElementById("breakStart").value;
-let be=document.getElementById("breakEnd").value;
+
+let breakStart=document.getElementById("breakStart").value;
+
+let breakEnd=document.getElementById("breakEnd").value;
+
 
 
 if(!date || !start || !finish){
+
 alert("Fill date, start and finish");
+
 return;
+
 }
 
 
-let total=timeMinutes(finish)-timeMinutes(start);
+
+let total=minutes(finish)-minutes(start);
+
 
 if(total<0){
+
 total+=1440;
+
 }
+
 
 
 let breakMinutes=0;
-let breakType="none";
+
+let type="none";
 
 
-if(bs && be){
 
-breakMinutes=timeMinutes(be)-timeMinutes(bs);
+if(breakStart && breakEnd){
+
+
+breakMinutes=minutes(breakEnd)-minutes(breakStart);
+
 
 if(breakMinutes<0){
+
 breakMinutes+=1440;
-}
-
-breakType="manual";
 
 }
+
+
+type="manual";
+
+
+}
+
 else if(total>360){
 
+
 breakMinutes=30;
-breakType="automatic";
+
+type="automatic";
+
 
 }
+
 
 
 let worked=total-breakMinutes;
 
 
 
+
 records.push({
 
-date:date,
-start:start,
-finish:finish,
 
-breakStart:bs || "",
-breakEnd:be || "",
+date:encrypt(date),
 
-breakMinutes:breakMinutes,
+start:encrypt(start),
 
-breakType:breakType,
+finish:encrypt(finish),
 
-totalMinutes:worked
+
+breakStart:encrypt(breakStart || ""),
+
+breakEnd:encrypt(breakEnd || ""),
+
+
+breakMinutes:encrypt(breakMinutes),
+
+breakType:encrypt(type),
+
+totalMinutes:encrypt(worked)
+
+
 
 });
 
 
+
 loadMonths();
+
 showMonth();
 
 
@@ -236,29 +340,58 @@ showMonth();
 
 
 
+
+
+
+
 function loadMonths(){
 
+
 let select=document.getElementById("month");
+
 
 select.innerHTML="";
 
 
-let months=[...new Set(records.map(x=>x.date.substring(0,7)))];
+
+let months=[];
+
+
+records.forEach(r=>{
+
+let d=decrypt(r.date);
+
+let m=d.substring(0,7);
+
+
+if(!months.includes(m))
+months.push(m);
+
+
+});
+
 
 
 months.forEach(m=>{
 
+
 let option=document.createElement("option");
 
 option.value=m;
+
 option.text=m;
 
+
 select.appendChild(option);
+
 
 });
 
 
 }
+
+
+
 
 
 
@@ -268,50 +401,95 @@ function showMonth(){
 let month=document.getElementById("month").value;
 
 
-let table=document.getElementById("report");
+let body=document.getElementById("report");
 
-table.innerHTML="";
+
+body.innerHTML="";
 
 
 let total=0;
+
 let breaks=0;
 
-
-records
-.filter(x=>x.date.startsWith(month))
-.forEach(x=>{
+let days=0;
 
 
-let row=table.insertRow();
+
+records.forEach(r=>{
 
 
-row.insertCell(0).innerHTML=x.date;
-row.insertCell(1).innerHTML=x.start;
-row.insertCell(2).innerHTML=x.finish;
-
-row.insertCell(3).innerHTML=x.breakStart || "-";
-row.insertCell(4).innerHTML=x.breakEnd || "-";
-
-row.insertCell(5).innerHTML=formatHours(x.breakMinutes);
-
-row.insertCell(6).innerHTML=x.breakType;
-
-row.insertCell(7).innerHTML=formatHours(x.totalMinutes);
+let date=decrypt(r.date);
 
 
-total+=x.totalMinutes;
-breaks+=x.breakMinutes;
+
+if(date.startsWith(month)){
+
+
+let start=decrypt(r.start);
+
+let finish=decrypt(r.finish);
+
+let bs=decrypt(r.breakStart);
+
+let be=decrypt(r.breakEnd);
+
+
+let bm=Number(
+decrypt(r.breakMinutes)
+);
+
+
+let type=decrypt(r.breakType);
+
+
+let hours=Number(
+decrypt(r.totalMinutes)
+);
+
+
+
+let row=body.insertRow();
+
+
+row.insertCell(0).innerHTML=date;
+
+row.insertCell(1).innerHTML=start;
+
+row.insertCell(2).innerHTML=finish;
+
+row.insertCell(3).innerHTML=bs || "-";
+
+row.insertCell(4).innerHTML=be || "-";
+
+row.insertCell(5).innerHTML=formatTime(bm);
+
+row.insertCell(6).innerHTML=type;
+
+row.insertCell(7).innerHTML=formatTime(hours);
+
+
+
+total+=hours;
+
+breaks+=bm;
+
+days++;
+
+
+
+}
+
 
 
 });
 
 
+
 document.getElementById("summary").innerHTML=
 
-"Total worked: "+formatHours(total)+
-"<br>Total break: "+formatHours(breaks)+
-"<br>Days worked: "+
-records.filter(x=>x.date.startsWith(month)).length;
+"Days: "+days+
+" | Worked: "+formatTime(total)+
+" | Break: "+formatTime(breaks);
 
 
 
@@ -319,25 +497,38 @@ records.filter(x=>x.date.startsWith(month)).length;
 
 
 
-function downloadJSON(){
+
+
+
+
+function downloadEncrypted(){
+
 
 let file=new Blob(
+
 [
 JSON.stringify(records,null,2)
 ],
+
 {
 type:"application/json"
 }
+
 );
+
 
 
 let a=document.createElement("a");
 
+
 a.href=URL.createObjectURL(file);
+
 
 a.download="workdata.json";
 
+
 a.click();
+
 
 
 }
@@ -345,6 +536,7 @@ a.click();
 
 
 </script>
+
 
 </body>
 </html>
