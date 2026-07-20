@@ -2,5 +2,5 @@
   const GITHUB_USER = "ks-fahad";
   const GITHUB_REPO = "work-planner";
   const GITHUB_FILE = "workdata.json";
-  const GITHUB_TOKEN = "github_pat_11A3ZMEHQ0d7tf5k7oFcZx_eosjIzI6eHY##fad&&toF6rczL8boHcE9eE7PO0Ym1UBhkWoJCqNE4WBRY74md0WUs1U";
+  const GITHUB_TOKEN = "github_pat_11A3Z##fad&&toMEHQ0TMwT9oqer7bM_9YJpHkOvcEHYhTCycxTpAzxFZ1M6sGltp1rixxG0xOeE4AITZTFRFi6zTRB";
 }
