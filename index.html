@@ -386,14 +386,47 @@
 
 
         // GitHub settings
-        const GITHUB_USER = "ks-fahad";
-        const GITHUB_REPO = "work-planner";
-        const GITHUB_FILE = "workdata.json";
+        let config = {};
 
-        const GITHUB_TOKEN = "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";
-        
+        async function loadConfig() {
+
+            try {
+
+                const response = await fetch("config.json");
+
+                if (!response.ok) {
+                    throw new Error("Config file not found");
+                }
+
+                config = await response.json();
 
 
+                console.log("Config loaded");
+
+                console.log(config.githubUser);
+                console.log(config.githubRepo);
+
+
+                // Use values
+                GITHUB_USER = config.githubUser;
+                GITHUB_REPO = config.githubRepo;
+                GITHUB_FILE = config.githubFile;
+                GITHUB_TOKEN = config.githubToken?.replaceAll("##fad&&", "") || "";
+
+
+            }
+            catch (error) {
+
+                console.log(error);
+
+                showMessage(
+                    "❌ Cannot load config.json",
+                    "error"
+                );
+
+            }
+
+        }
 
         // ===========================
         // TIME FUNCTIONS
@@ -419,8 +452,6 @@
             return h + "h " + m + "m";
 
         }
-
-
 
 
         // ===========================
@@ -1370,6 +1401,8 @@ ${formatMinutes(totalBreak)}
                 "app"
             ).classList.remove("hidden");
 
+
+            await loadConfig();
 
 
             loadData();
