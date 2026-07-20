@@ -3,148 +3,150 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Encrypted Work Planner</title>
+    <title>Encrypted Work Planner</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
-<style>
-
-body{
-    font-family:Arial, sans-serif;
-    background:#f1f3f5;
-    margin:0;
-    padding:20px;
-}
-
-
-.container{
-    max-width:1100px;
-    margin:auto;
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 0 10px #ccc;
-}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f3f5;
+            margin: 0;
+            padding: 20px;
+        }
 
 
-h1,h2{
-    text-align:center;
-}
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px #ccc;
+        }
 
 
-input,select,button{
-    width:100%;
-    padding:10px;
-    margin-top:6px;
-    margin-bottom:12px;
-    box-sizing:border-box;
-}
+        h1,
+        h2 {
+            text-align: center;
+        }
 
 
-button{
-    background:#0066cc;
-    color:white;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-}
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
 
 
-button:hover{
-    background:#004999;
-}
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
 
-.secondary{
-    background:#666;
-}
+        button:hover {
+            background: #004999;
+        }
 
 
-.danger{
-    background:#cc0000;
-}
+        .secondary {
+            background: #666;
+        }
 
 
-.success{
-    background:#d4edda;
-    color:#155724;
-    padding:12px;
-    margin-bottom:15px;
-    border-radius:5px;
-}
+        .danger {
+            background: #cc0000;
+        }
 
 
-.error{
-    background:#f8d7da;
-    color:#721c24;
-    padding:12px;
-    margin-bottom:15px;
-    border-radius:5px;
-}
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
 
 
-.warning{
-    background:#fff3cd;
-    color:#856404;
-    padding:12px;
-    margin-bottom:15px;
-    border-radius:5px;
-}
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
 
 
-.hidden{
-    display:none;
-}
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
 
 
-table{
-
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-
-}
+        .hidden {
+            display: none;
+        }
 
 
-th,td{
+        table {
 
-    border:1px solid #ccc;
-    padding:8px;
-    text-align:center;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
 
-}
-
-
-th{
-
-    background:#0066cc;
-    color:white;
-
-}
+        }
 
 
-.card{
+        th,
+        td {
 
-    border:1px solid #ddd;
-    padding:15px;
-    margin-top:15px;
-    border-radius:8px;
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
 
-}
+        }
 
 
-.small-btn{
+        th {
 
-    width:auto;
-    padding:6px 10px;
-    margin:2px;
+            background: #0066cc;
+            color: white;
 
-}
+        }
 
-</style>
+
+        .card {
+
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+
+        }
+
+
+        .small-btn {
+
+            width: auto;
+            padding: 6px 10px;
+            margin: 2px;
+
+        }
+    </style>
 
 
 </head>
@@ -153,456 +155,450 @@ th{
 <body>
 
 
-<div class="container">
+    <div class="container">
 
 
-<h1>Encrypted Work Planner</h1>
+        <h1>Encrypted Work Planner</h1>
 
 
 
-<!-- MESSAGE AREA -->
+        <!-- MESSAGE AREA -->
 
-<div id="message"></div>
+        <div id="message"></div>
 
 
 
 
-<!-- LOGIN -->
+        <!-- LOGIN -->
 
 
-<div id="loginBox" class="card">
+        <div id="loginBox" class="card">
 
 
-<h2>Open Database</h2>
+            <h2>Open Database</h2>
 
 
-<label>
-Encryption Password
-</label>
+            <label>
+                Encryption Password
+            </label>
 
-<input 
-type="password"
-id="passwordInput"
-placeholder="Password">
+            <input type="password" id="passwordInput" placeholder="Password">
 
 
-<button onclick="login()">
-Open
-</button>
+            <button onclick="login()">
+                Open
+            </button>
 
 
-</div>
+        </div>
 
+        <!-- APPLICATION -->
 
 
+        <div id="app" class="hidden">
 
 
-<!-- APPLICATION -->
+            <h2>Work Entry</h2>
 
 
-<div id="app" class="hidden">
 
+            <div class="card">
 
-<h2>Work Entry</h2>
 
+                <label>Date</label>
 
+                <input type="date" id="date">
 
-<div class="card">
 
 
-<label>Date</label>
+                <label>Start Time</label>
 
-<input 
-type="date"
-id="date">
+                <input type="time" id="start">
 
 
 
-<label>Start Time</label>
+                <label>Finish Time</label>
 
-<input 
-type="time"
-id="start">
+                <input type="time" id="finish">
 
 
 
-<label>Finish Time</label>
+                <label>Break?</label>
 
-<input 
-type="time"
-id="finish">
+                <select id="hasBreak" onchange="toggleBreak()">
 
+                    <option value="no">
+                        No
+                    </option>
 
+                    <option value="yes">
+                        Yes
+                    </option>
 
-<label>Break?</label>
+                </select>
 
-<select id="hasBreak" onchange="toggleBreak()">
 
-<option value="no">
-No
-</option>
 
-<option value="yes">
-Yes
-</option>
 
-</select>
+                <div id="breakArea" class="hidden">
 
 
+                    <label>
+                        Break Start
+                    </label>
 
+                    <input type="time" id="breakStart">
 
-<div id="breakArea" class="hidden">
 
+                    <label>
+                        Break End
+                    </label>
 
-<label>
-Break Start
-</label>
+                    <input type="time" id="breakEnd">
 
-<input 
-type="time"
-id="breakStart">
 
+                </div>
 
-<label>
-Break End
-</label>
 
-<input 
-type="time"
-id="breakEnd">
 
 
-</div>
+                <button onclick="saveRecord()" id="saveButton">
+                    Add Record
+                </button>
 
 
+                <button onclick="clearForm()" class="secondary">
+                    Clear
+                </button>
 
 
-<button onclick="saveRecord()" id="saveButton">
-Add Record
-</button>
 
+            </div>
 
-<button onclick="clearForm()" class="secondary">
-Clear
-</button>
 
 
 
-</div>
 
+            <h2>Monthly Report</h2>
 
 
+            <div class="card">
 
 
-<h2>Monthly Report</h2>
+                <label>
+                    Select Month
+                </label>
 
 
-<div class="card">
+                <select id="monthSelect" onchange="showMonth()">
 
+                </select>
 
-<label>
-Select Month
-</label>
 
+            </div>
 
-<select id="monthSelect" onchange="showMonth()">
 
-</select>
 
 
-</div>
 
+            <table>
 
 
+                <thead>
 
+                    <tr>
 
-<table>
+                        <th>No.</th>
+                        <th>Date</th>
+                        <th>Start</th>
+                        <th>Finish</th>
+                        <th>Break Start</th>
+                        <th>Break End</th>
+                        <th>Break Time</th>
+                        <th>Type</th>
+                        <th>Total Hours</th>
+                        <th>Action</th>
 
 
-<thead>
+                    </tr>
 
-<tr>
 
-<th>No.</th>
-<th>Date</th>
-<th>Start</th>
-<th>Finish</th>
-<th>Break Start</th>
-<th>Break End</th>
-<th>Break Time</th>
-<th>Type</th>
-<th>Total Hours</th>
-<th>Action</th>
+                </thead>
 
 
-</tr>
+                <tbody id="reportBody">
 
 
-</thead>
+                </tbody>
 
 
-<tbody id="reportBody">
+            </table>
 
 
-</tbody>
 
+            <div class="card" id="summary">
 
-</table>
 
+            </div>
 
 
-<div class="card" id="summary">
+            <div id="githubStatus" class="card">
 
+                GitHub status: Not saved
 
-</div>
+            </div>
 
 
+            <button onclick="saveToGitHub()">
+                Save To GitHub
+            </button>
 
-<button onclick="saveToGitHub()">
-Save To GitHub
-</button>
 
+            <button onclick="retryGitHubSave()" class="secondary">
+                Retry Save
+            </button>
 
 
-</div>
 
+        </div>
 
 
-</div>
 
+    </div>
 
 
 
 
-<script>
 
+    <script>
 
-// ===========================
-// GLOBAL VARIABLES
-// ===========================
 
+        // ===========================
+        // GLOBAL VARIABLES
+        // ===========================
 
-let password="";
 
-let records=[];
+        let password = "";
 
-let editIndex=-1;
+        let records = [];
 
+        let editIndex = -1;
 
-// GitHub settings
-const GITHUB_USER="ks-fahad";
-const GITHUB_REPO="work-planner";
-const GITHUB_FILE="workdata.json";
 
-const GITHUB_TOKEN="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";
+        // GitHub settings
+        const GITHUB_USER = "ks-fahad";
+        const GITHUB_REPO = "work-planner";
+        const GITHUB_FILE = "workdata.json";
 
+        const GITHUB_TOKEN = "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";
 
 
-// ===========================
-// TIME FUNCTIONS
-// ===========================
 
+        // ===========================
+        // TIME FUNCTIONS
+        // ===========================
 
-function toMinutes(time){
 
-let p=time.split(":");
+        function toMinutes(time) {
 
-return Number(p[0])*60 + Number(p[1]);
+            let p = time.split(":");
 
-}
+            return Number(p[0]) * 60 + Number(p[1]);
 
+        }
 
 
-function formatMinutes(minutes){
 
-let h=Math.floor(minutes/60);
+        function formatMinutes(minutes) {
 
-let m=minutes%60;
+            let h = Math.floor(minutes / 60);
 
-return h+"h "+m+"m";
+            let m = minutes % 60;
 
-}
+            return h + "h " + m + "m";
 
+        }
 
 
 
-// ===========================
-// CALCULATE WORK HOURS
-// ===========================
 
+        // ===========================
+        // CALCULATE WORK HOURS
+        // ===========================
 
-function calculateWork(){
 
-let start=document.getElementById("start").value;
+        function calculateWork() {
 
-let finish=document.getElementById("finish").value;
+            let start = document.getElementById("start").value;
 
+            let finish = document.getElementById("finish").value;
 
-if(!start || !finish){
 
-return null;
+            if (!start || !finish) {
 
-}
+                return null;
 
+            }
 
-let total=toMinutes(finish)-toMinutes(start);
 
+            let total = toMinutes(finish) - toMinutes(start);
 
-if(total<0){
 
-total+=1440;
+            if (total < 0) {
 
-}
+                total += 1440;
 
+            }
 
-let breakMinutes=0;
 
-let breakType="None";
+            let breakMinutes = 0;
 
+            let breakType = "None";
 
-let hasBreak=document.getElementById("hasBreak").value;
 
+            let hasBreak = document.getElementById("hasBreak").value;
 
 
-if(hasBreak=="yes"){
 
+            if (hasBreak == "yes") {
 
-let bs=document.getElementById("breakStart").value;
 
-let be=document.getElementById("breakEnd").value;
+                let bs = document.getElementById("breakStart").value;
 
+                let be = document.getElementById("breakEnd").value;
 
-if(bs && be){
 
+                if (bs && be) {
 
-breakMinutes=
-toMinutes(be)-toMinutes(bs);
 
+                    breakMinutes =
+                        toMinutes(be) - toMinutes(bs);
 
 
-if(breakMinutes<0){
 
-breakMinutes+=1440;
+                    if (breakMinutes < 0) {
 
-}
+                        breakMinutes += 1440;
 
+                    }
 
-breakType="Manual";
 
+                    breakType = "Manual";
 
-}
 
+                }
 
 
-}
-else if(total>360){
 
+            }
+            else if (total > 360) {
 
-breakMinutes=30;
 
-breakType="Automatic";
+                breakMinutes = 30;
 
+                breakType = "Automatic";
 
-}
 
+            }
 
 
-return {
 
-total:total-breakMinutes,
+            return {
 
-breakMinutes:breakMinutes,
+                total: total - breakMinutes,
 
-breakType:breakType
+                breakMinutes: breakMinutes,
 
-};
+                breakType: breakType
 
+            };
 
-}
 
+        }
 
 
 
 
-// ===========================
-// SAVE RECORD
-// ===========================
 
+        // ===========================
+        // SAVE RECORD
+        // ===========================
 
-function saveRecord(){
 
+        function saveRecord() {
 
 
-let date=document.getElementById("date").value;
 
+            let date = document.getElementById("date").value;
 
-let start=document.getElementById("start").value;
 
+            let start = document.getElementById("start").value;
 
-let finish=document.getElementById("finish").value;
 
+            let finish = document.getElementById("finish").value;
 
 
-if(!date || !start || !finish){
 
+            if (!date || !start || !finish) {
 
-showMessage(
-"Date, start and finish are required",
-"error"
-);
 
+                showMessage(
+                    "Date, start and finish are required",
+                    "error"
+                );
 
-return;
 
+                return;
 
-}
 
+            }
 
 
-let result=calculateWork();
 
+            let result = calculateWork();
 
 
-if(!result){
 
-showMessage(
-"Cannot calculate hours",
-"error"
-);
+            if (!result) {
 
-return;
+                showMessage(
+                    "Cannot calculate hours",
+                    "error"
+                );
 
-}
+                return;
 
+            }
 
 
 
 
-// CHECK DUPLICATE DATE
 
+            // CHECK DUPLICATE DATE
 
-let existing=records.findIndex(r=>{
 
+            let existing = records.findIndex(r => {
 
-return decrypt(r.date)==date;
 
+                return decrypt(r.date) == date;
 
-});
 
+            });
 
 
 
 
-if(existing>=0 && editIndex==-1){
 
+            if (existing >= 0 && editIndex == -1) {
 
 
-let old=records[existing];
 
+                let old = records[existing];
 
-let oldText=
 
-`
+                let oldText =
+
+                    `
 Existing data found:
 
 Date:
@@ -621,471 +617,471 @@ ${decrypt(old.breakEnd)}
 
 Total:
 ${formatMinutes(
-Number(
-decrypt(old.totalMinutes)
-)
-)}
+                        Number(
+                            decrypt(old.totalMinutes)
+                        )
+                    )}
 
 Do you want to update?
 `;
 
 
 
-let answer=confirm(oldText);
+                let answer = confirm(oldText);
 
 
 
-if(!answer){
+                if (!answer) {
 
 
-showMessage(
-"Update cancelled",
-"warning"
-);
+                    showMessage(
+                        "Update cancelled",
+                        "warning"
+                    );
 
 
-return;
+                    return;
 
 
-}
+                }
 
 
-editIndex=existing;
+                editIndex = existing;
 
 
 
-}
+            }
 
 
 
 
 
 
-let record={
+            let record = {
 
 
-date:encrypt(date),
+                date: encrypt(date),
 
-start:encrypt(start),
+                start: encrypt(start),
 
-finish:encrypt(finish),
+                finish: encrypt(finish),
 
 
-breakStart:encrypt(
-document.getElementById("breakStart").value
-),
+                breakStart: encrypt(
+                    document.getElementById("breakStart").value
+                ),
 
 
-breakEnd:encrypt(
-document.getElementById("breakEnd").value
-),
+                breakEnd: encrypt(
+                    document.getElementById("breakEnd").value
+                ),
 
 
-breakMinutes:encrypt(
-result.breakMinutes
-),
+                breakMinutes: encrypt(
+                    result.breakMinutes
+                ),
 
 
-breakType:encrypt(
-result.breakType
-),
+                breakType: encrypt(
+                    result.breakType
+                ),
 
 
-totalMinutes:encrypt(
-result.total
-)
+                totalMinutes: encrypt(
+                    result.total
+                )
 
 
 
-};
+            };
 
 
 
 
 
 
-if(editIndex>=0){
+            if (editIndex >= 0) {
 
 
-records[editIndex]=record;
+                records[editIndex] = record;
 
 
-showMessage(
-"Updated successfully"
-);
+                showMessage(
+                    "Updated successfully"
+                );
 
 
-}
-else{
+            }
+            else {
 
 
-records.push(record);
+                records.push(record);
 
 
-showMessage(
-"Saved successfully"
-);
+                showMessage(
+                    "Saved successfully"
+                );
 
 
-}
+            }
 
 
 
 
-clearForm();
+            clearForm();
 
 
-loadMonths();
+            loadMonths();
 
 
-showMonth();
+            showMonth();
 
 
 
-}
-
-
-
-
-// ===========================
-// LOAD MONTH LIST
-// ===========================
-
-
-function loadMonths(){
-
-    let select=document.getElementById("monthSelect");
-
-    select.innerHTML="";
-
-    let months=[];
-
-
-    records.forEach(r=>{
-
-        let date=decrypt(r.date);
-
-        let month=date.substring(0,7);
-
-
-        if(!months.includes(month)){
-            months.push(month);
         }
 
-    });
 
 
 
-    months.forEach(m=>{
+        // ===========================
+        // LOAD MONTH LIST
+        // ===========================
 
 
-        let parts=m.split("-");
+        function loadMonths() {
 
-        let year=parts[0];
+            let select = document.getElementById("monthSelect");
 
-        let monthNumber=Number(parts[1]);
+            select.innerHTML = "";
+
+            let months = [];
 
 
-        let monthName=new Date(
-            year,
-            monthNumber-1,
-            1
-        ).toLocaleString(
-            "default",
-            {
-                month:"long"
+            records.forEach(r => {
+
+                let date = decrypt(r.date);
+
+                let month = date.substring(0, 7);
+
+
+                if (!months.includes(month)) {
+                    months.push(month);
+                }
+
+            });
+
+
+
+            months.forEach(m => {
+
+
+                let parts = m.split("-");
+
+                let year = parts[0];
+
+                let monthNumber = Number(parts[1]);
+
+
+                let monthName = new Date(
+                    year,
+                    monthNumber - 1,
+                    1
+                ).toLocaleString(
+                    "default",
+                    {
+                        month: "long"
+                    }
+                );
+
+
+                let option = document.createElement("option");
+
+
+                option.value = m;
+
+                option.innerHTML =
+                    monthName + " " + year;
+
+
+                select.appendChild(option);
+
+
+            });
+
+        }
+
+
+
+
+
+        // ===========================
+        // EDIT RECORD
+        // ===========================
+
+
+        function editRecord(index) {
+
+
+            let r = records[index];
+
+
+
+            editIndex = index;
+
+
+
+            document.getElementById(
+                "saveButton"
+            ).innerHTML = "Update Record";
+
+
+
+            document.getElementById("date").value =
+                decrypt(r.date);
+
+
+            document.getElementById("start").value =
+                decrypt(r.start);
+
+
+            document.getElementById("finish").value =
+                decrypt(r.finish);
+
+
+
+            let bs = decrypt(r.breakStart);
+
+            let be = decrypt(r.breakEnd);
+
+
+
+            if (bs && be) {
+
+
+                document.getElementById("hasBreak").value = "yes";
+
+
+                toggleBreak();
+
+
+                document.getElementById("breakStart").value = bs;
+
+
+                document.getElementById("breakEnd").value = be;
+
+
+
             }
-        );
+            else {
 
 
-        let option=document.createElement("option");
+                document.getElementById("hasBreak").value = "no";
 
 
-        option.value=m;
+                toggleBreak();
 
-        option.innerHTML=
-            monthName+" "+year;
 
+            }
 
-        select.appendChild(option);
 
 
-    });
+            showMessage(
+                "Editing selected record",
+                "warning"
+            );
 
-}
 
+        }
 
 
 
 
-// ===========================
-// EDIT RECORD
-// ===========================
 
+        // ===========================
+        // DELETE RECORD
+        // ===========================
 
-function editRecord(index){
 
+        function deleteRecord(index) {
 
-let r=records[index];
 
 
+            let r = records[index];
 
-editIndex=index;
 
 
+            let ok = confirm(
 
-document.getElementById(
-"saveButton"
-).innerHTML="Update Record";
+                "Delete this record?\n\n" +
+                decrypt(r.date) +
+                "\n" +
+                decrypt(r.start) +
+                " - " +
+                decrypt(r.finish)
 
+            );
 
 
-document.getElementById("date").value=
-decrypt(r.date);
 
+            if (!ok) {
 
-document.getElementById("start").value=
-decrypt(r.start);
 
+                showMessage(
+                    "Delete cancelled",
+                    "warning"
+                );
 
-document.getElementById("finish").value=
-decrypt(r.finish);
 
+                return;
 
 
-let bs=decrypt(r.breakStart);
+            }
 
-let be=decrypt(r.breakEnd);
 
 
+            records.splice(index, 1);
 
-if(bs && be){
 
 
-document.getElementById("hasBreak").value="yes";
+            showMonth();
 
 
-toggleBreak();
+            loadMonths();
 
 
-document.getElementById("breakStart").value=bs;
 
+            showMessage(
+                "Deleted successfully"
+            );
 
-document.getElementById("breakEnd").value=be;
 
 
+        }
 
-}
-else{
 
 
-document.getElementById("hasBreak").value="no";
 
+        // ===========================
+        // SHOW MONTH REPORT
+        // ===========================
 
-toggleBreak();
 
+        function showMonth() {
 
-}
 
+            let month = document.getElementById(
+                "monthSelect"
+            ).value;
 
 
-showMessage(
-"Editing selected record",
-"warning"
-);
 
+            let body = document.getElementById(
+                "reportBody"
+            );
 
-}
 
 
+            body.innerHTML = "";
 
 
 
-// ===========================
-// DELETE RECORD
-// ===========================
+            let totalHours = 0;
 
+            let totalBreak = 0;
 
-function deleteRecord(index){
+            let count = 0;
 
 
 
-let r=records[index];
+            records.forEach((r, index) => {
 
 
 
-let ok=confirm(
+                let date = decrypt(r.date);
 
-"Delete this record?\n\n"+
-decrypt(r.date)+
-"\n"+
-decrypt(r.start)+
-" - "+
-decrypt(r.finish)
 
-);
 
+                if (date.startsWith(month)) {
 
 
-if(!ok){
 
+                    count++;
 
-showMessage(
-"Delete cancelled",
-"warning"
-);
 
 
-return;
+                    let start = decrypt(r.start);
 
+                    let finish = decrypt(r.finish);
 
-}
 
+                    let bs = decrypt(r.breakStart);
 
+                    let be = decrypt(r.breakEnd);
 
-records.splice(index,1);
 
 
+                    let breakMinutes = Number(
+                        decrypt(r.breakMinutes)
+                    );
 
-showMonth();
 
 
-loadMonths();
+                    let breakType = decrypt(
+                        r.breakType
+                    );
 
 
 
-showMessage(
-"Deleted successfully"
-);
+                    let worked = Number(
+                        decrypt(r.totalMinutes)
+                    );
 
 
 
-}
+                    let row = body.insertRow();
 
 
 
+                    row.insertCell(0).innerHTML = count;
 
-// ===========================
-// SHOW MONTH REPORT
-// ===========================
 
+                    row.insertCell(1).innerHTML = date;
 
-function showMonth(){
 
+                    row.insertCell(2).innerHTML = start;
 
-let month=document.getElementById(
-"monthSelect"
-).value;
 
+                    row.insertCell(3).innerHTML = finish;
 
 
-let body=document.getElementById(
-"reportBody"
-);
+                    row.insertCell(4).innerHTML = bs || "-";
 
 
+                    row.insertCell(5).innerHTML = be || "-";
 
-body.innerHTML="";
 
+                    row.insertCell(6).innerHTML =
+                        formatMinutes(breakMinutes);
 
 
-let totalHours=0;
+                    row.insertCell(7).innerHTML =
+                        breakType;
 
-let totalBreak=0;
 
-let count=0;
+                    row.insertCell(8).innerHTML =
+                        formatMinutes(worked);
 
 
 
-records.forEach((r,index)=>{
 
 
+                    let action = row.insertCell(9);
 
-let date=decrypt(r.date);
 
 
+                    action.innerHTML =
 
-if(date.startsWith(month)){
-
-
-
-count++;
-
-
-
-let start=decrypt(r.start);
-
-let finish=decrypt(r.finish);
-
-
-let bs=decrypt(r.breakStart);
-
-let be=decrypt(r.breakEnd);
-
-
-
-let breakMinutes=Number(
-decrypt(r.breakMinutes)
-);
-
-
-
-let breakType=decrypt(
-r.breakType
-);
-
-
-
-let worked=Number(
-decrypt(r.totalMinutes)
-);
-
-
-
-let row=body.insertRow();
-
-
-
-row.insertCell(0).innerHTML=count;
-
-
-row.insertCell(1).innerHTML=date;
-
-
-row.insertCell(2).innerHTML=start;
-
-
-row.insertCell(3).innerHTML=finish;
-
-
-row.insertCell(4).innerHTML=bs || "-";
-
-
-row.insertCell(5).innerHTML=be || "-";
-
-
-row.insertCell(6).innerHTML=
-formatMinutes(breakMinutes);
-
-
-row.insertCell(7).innerHTML=
-breakType;
-
-
-row.insertCell(8).innerHTML=
-formatMinutes(worked);
-
-
-
-
-
-let action=row.insertCell(9);
-
-
-
-action.innerHTML=
-
-`
+                        `
 <button class="small-btn"
 onclick="editRecord(${index})">
 Edit
@@ -1100,28 +1096,28 @@ Delete
 
 
 
-totalHours+=worked;
+                    totalHours += worked;
 
 
-totalBreak+=breakMinutes;
-
-
-
-}
+                    totalBreak += breakMinutes;
 
 
 
-});
+                }
+
+
+
+            });
 
 
 
 
 
-document.getElementById(
-"summary"
-).innerHTML=
+            document.getElementById(
+                "summary"
+            ).innerHTML =
 
-`
+                `
 <b>Monthly Summary</b>
 <br>
 Working Days:
@@ -1141,425 +1137,716 @@ ${formatMinutes(totalBreak)}
 
 
 
-}
+        }
 
 
 
 
 
-// ===========================
-// PREPARE ENCRYPTED JSON
-// ===========================
+        // ===========================
+        // PREPARE ENCRYPTED JSON
+        // ===========================
 
 
-function encryptedJSON(){
+        function encryptedJSON() {
 
 
-return JSON.stringify(
-records,
-null,
-2
-);
+            return JSON.stringify(
+                records,
+                null,
+                2
+            );
 
 
-}
+        }
 
 
 
 
 
 
-// ===========================
-// GITHUB SAVE
-// ===========================
+        // ===========================
+        // GITHUB SAVE
+        // ===========================
 
 
 
-async function saveToGitHub(){
+        async function saveToGitHub() {
 
 
 
-const url=
+            const url =
 
-`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
+                `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
 
 
 
-let sha="";
+            let sha = "";
 
 
 
-// GET CURRENT FILE SHA
+            // GET CURRENT FILE SHA
 
 
-let old=await fetch(url,{
+            let old = await fetch(url, {
 
-headers:{
+                headers: {
 
-"Authorization":
-"Bearer "+GITHUB_TOKEN
+                    "Authorization":
+                        "Bearer " + GITHUB_TOKEN
 
-}
+                }
 
 
-});
+            });
 
 
 
-if(old.ok){
+            if (old.ok) {
 
 
-let oldData=await old.json();
+                let oldData = await old.json();
 
 
-sha=oldData.sha;
+                sha = oldData.sha;
 
 
-}
+            }
 
 
 
 
 
 
-let content=btoa(
-unescape(
-encodeURIComponent(
-encryptedJSON()
-)
-)
-);
+            let content = btoa(
+                unescape(
+                    encodeURIComponent(
+                        encryptedJSON()
+                    )
+                )
+            );
 
 
 
 
 
 
-let response=await fetch(url,{
+            let response = await fetch(url, {
 
 
-method:"PUT",
+                method: "PUT",
 
 
-headers:{
+                headers: {
 
 
-"Authorization":
-"Bearer "+GITHUB_TOKEN,
+                    "Authorization":
+                        "Bearer " + GITHUB_TOKEN,
 
 
-"Content-Type":
-"application/json"
+                    "Content-Type":
+                        "application/json"
 
 
-},
+                },
 
 
 
-body:JSON.stringify({
+                body: JSON.stringify({
 
 
-message:
-"Update work planner data",
+                    message:
+                        "Update work planner data",
 
 
-content:content,
+                    content: content,
 
 
-sha:sha
+                    sha: sha
 
 
-})
+                })
 
 
 
-});
+            });
 
 
 
 
 
-if(response.ok){
+            if (response.ok) {
 
 
-showMessage(
-"Saved to GitHub successfully"
-);
+                showMessage(
+                    "Saved to GitHub successfully"
+                );
 
 
-}
+            }
 
-else{
+            else {
 
 
-showMessage(
-"GitHub save failed",
-"error"
-);
+                showMessage(
+                    "GitHub save failed",
+                    "error"
+                );
 
 
-}
+            }
 
 
 
-}
+        }
 
 
 
 
 
 
-// ===========================
-// MESSAGE SYSTEM
-// ===========================
+        // ===========================
+        // MESSAGE SYSTEM
+        // ===========================
 
 
-function showMessage(text,type="success"){
+        function showMessage(text, type = "success") {
 
-let box=document.getElementById("message");
+            let box = document.getElementById("message");
 
-box.innerHTML=text;
+            box.innerHTML = text;
 
-box.className=type;
+            box.className = type;
 
 
-setTimeout(()=>{
+            setTimeout(() => {
 
-box.innerHTML="";
-box.className="";
+                box.innerHTML = "";
+                box.className = "";
 
-},4000);
+            }, 4000);
 
 
-}
+        }
 
 
 
 
 
-// ===========================
-// LOGIN
-// ===========================
+        // ===========================
+        // LOGIN
+        // ===========================
 
 
-function login(){
+        function login() {
 
 
-password=document.getElementById(
-"passwordInput"
-).value;
+            password = document.getElementById(
+                "passwordInput"
+            ).value;
 
 
 
-if(password==""){
+            if (password == "") {
 
-showMessage(
-"Password required",
-"error"
-);
+                showMessage(
+                    "Password required",
+                    "error"
+                );
 
-return;
+                return;
 
-}
+            }
 
 
 
-document.getElementById(
-"loginBox"
-).classList.add("hidden");
+            document.getElementById(
+                "loginBox"
+            ).classList.add("hidden");
 
 
-document.getElementById(
-"app"
-).classList.remove("hidden");
+            document.getElementById(
+                "app"
+            ).classList.remove("hidden");
 
 
 
-loadData();
+            loadData();
 
 
-}
+        }
 
 
 
 
 
-// ===========================
-// ENCRYPTION
-// ===========================
+        // ===========================
+        // ENCRYPTION
+        // ===========================
 
 
-function encrypt(value){
+        function encrypt(value) {
 
-return CryptoJS.AES.encrypt(
-String(value),
-password
-).toString();
+            return CryptoJS.AES.encrypt(
+                String(value),
+                password
+            ).toString();
 
-}
+        }
 
 
 
-function decrypt(value){
+        function decrypt(value) {
 
-try{
+            try {
 
-return CryptoJS.AES.decrypt(
-value,
-password
-)
-.toString(
-CryptoJS.enc.Utf8
-);
+                return CryptoJS.AES.decrypt(
+                    value,
+                    password
+                )
+                    .toString(
+                        CryptoJS.enc.Utf8
+                    );
 
 
-}
+            }
 
-catch(e){
+            catch (e) {
 
-return "";
+                return "";
 
-}
+            }
 
-}
+        }
 
 
 
 
 
-// ===========================
-// LOAD JSON
-// ===========================
+        // ===========================
+        // LOAD JSON
+        // ===========================
 
 
-function loadData(){
+        function loadData() {
 
 
-fetch(GITHUB_FILE)
+            fetch(GITHUB_FILE)
 
-.then(r=>r.json())
+                .then(r => r.json())
 
-.then(data=>{
+                .then(data => {
 
 
-records=data;
+                    records = data;
 
 
-loadMonths();
+                    loadMonths();
 
-showMonth();
+                    showMonth();
 
 
 
-showMessage(
-"Database loaded successfully"
-);
+                    showMessage(
+                        "Database loaded successfully"
+                    );
 
 
-})
+                })
 
 
-.catch(()=>{
+                .catch(() => {
 
 
-records=[];
+                    records = [];
 
 
-showMessage(
-"New database created",
-"warning"
-);
+                    showMessage(
+                        "New database created",
+                        "warning"
+                    );
 
 
-});
+                });
 
 
-}
+        }
 
 
 
 
-// ===========================
-// BREAK DISPLAY
-// ===========================
+        // ===========================
+        // BREAK DISPLAY
+        // ===========================
 
 
-function toggleBreak(){
+        function toggleBreak() {
 
 
-let value=document.getElementById(
-"hasBreak"
-).value;
+            let value = document.getElementById(
+                "hasBreak"
+            ).value;
 
 
 
-if(value=="yes"){
+            if (value == "yes") {
 
-document.getElementById(
-"breakArea"
-).classList.remove("hidden");
+                document.getElementById(
+                    "breakArea"
+                ).classList.remove("hidden");
 
-}
+            }
 
-else{
+            else {
 
 
-document.getElementById(
-"breakArea"
-).classList.add("hidden");
+                document.getElementById(
+                    "breakArea"
+                ).classList.add("hidden");
 
 
-}
+            }
 
 
-}
+        }
 
 
 
 
-// ===========================
-// CLEAR FORM
-// ===========================
+        // ===========================
+        // CLEAR FORM
+        // ===========================
 
 
-function clearForm(){
+        function clearForm() {
 
 
-editIndex=-1;
+            editIndex = -1;
 
 
-document.getElementById(
-"saveButton"
-).innerHTML="Add Record";
+            document.getElementById(
+                "saveButton"
+            ).innerHTML = "Add Record";
 
 
-document.getElementById("date").value="";
+            document.getElementById("date").value = "";
 
-document.getElementById("start").value="";
+            document.getElementById("start").value = "";
 
-document.getElementById("finish").value="";
+            document.getElementById("finish").value = "";
 
-document.getElementById("breakStart").value="";
+            document.getElementById("breakStart").value = "";
 
-document.getElementById("breakEnd").value="";
+            document.getElementById("breakEnd").value = "";
 
-document.getElementById("hasBreak").value="no";
+            document.getElementById("hasBreak").value = "no";
 
 
-toggleBreak();
+            toggleBreak();
 
 
-showMessage(
-"Form cleared",
-"warning"
-);
+            showMessage(
+                "Form cleared",
+                "warning"
+            );
 
 
-}
+        }
 
+        let lastSaveFailed = false;
 
 
-</script>
+
+        function showGitHubStatus(message, type = "success") {
+
+            let box = document.getElementById(
+                "githubStatus"
+            );
+
+
+            box.innerHTML = message;
+
+
+            box.className = type;
+
+
+        }
+
+
+
+
+
+        async function saveToGitHub() {
+
+
+            try {
+
+
+                showGitHubStatus(
+                    "🔄 Saving to GitHub...",
+                    "warning"
+                );
+
+
+
+                if (
+                    GITHUB_TOKEN == "YOUR_TOKEN" ||
+                    GITHUB_TOKEN == ""
+                ) {
+
+                    showGitHubStatus(
+                        "⚠ GitHub token missing",
+                        "error"
+                    );
+
+
+                    lastSaveFailed = true;
+
+                    return;
+
+                }
+
+
+
+
+
+                const url =
+
+                    `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
+
+
+
+
+
+                let sha = "";
+
+
+
+                // Get current file
+
+
+                let old = await fetch(url, {
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " + GITHUB_TOKEN,
+
+                        "Accept":
+                            "application/vnd.github+json"
+
+                    }
+
+                });
+
+
+
+
+
+                if (old.ok) {
+
+
+                    let oldFile = await old.json();
+
+
+                    sha = oldFile.sha;
+
+
+                }
+
+
+
+
+
+                let encryptedData = JSON.stringify(
+                    records,
+                    null,
+                    2
+                );
+
+
+
+
+
+                let encoded = btoa(
+                    unescape(
+                        encodeURIComponent(
+                            encryptedData
+                        )
+                    )
+                );
+
+
+
+
+
+                let body = {
+
+
+                    message:
+                        "Update encrypted work data",
+
+
+                    content:
+                        encoded
+
+
+                };
+
+
+
+                if (sha != "") {
+
+                    body.sha = sha;
+
+                }
+
+
+
+
+
+
+
+                let response = await fetch(url, {
+
+                    method: "PUT",
+
+
+                    headers: {
+
+                        "Authorization":
+                            "Bearer " + GITHUB_TOKEN,
+
+                        "Accept":
+                            "application/vnd.github+json",
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+
+                    body:
+                        JSON.stringify(body)
+
+
+                });
+
+
+
+
+
+
+                let result = await response.json();
+
+
+
+
+
+                if (response.ok) {
+
+
+                    lastSaveFailed = false;
+
+
+                    showGitHubStatus(
+                        "✔ Saved successfully to GitHub",
+                        "success"
+                    );
+
+
+                }
+
+                else {
+
+
+                    lastSaveFailed = true;
+
+
+                    showGitHubStatus(
+
+                        "❌ GitHub error: " +
+                        result.message,
+
+                        "error"
+
+                    );
+
+
+                    console.log(result);
+
+
+                }
+
+
+
+            }
+
+
+            catch (error) {
+
+
+
+                lastSaveFailed = true;
+
+
+
+                showGitHubStatus(
+
+                    "❌ Cannot connect to GitHub: " +
+                    error.message,
+
+                    "error"
+
+                );
+
+
+
+            }
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+        function retryGitHubSave() {
+
+
+            if (lastSaveFailed) {
+
+
+                saveToGitHub();
+
+
+            }
+
+            else {
+
+
+                showGitHubStatus(
+
+                    "✔ Nothing to retry",
+
+                    "success"
+
+                );
+
+
+            }
+
+
+        }
+
+
+
+    </script>
 
 
 </body>
