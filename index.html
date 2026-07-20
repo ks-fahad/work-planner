@@ -1370,19 +1370,17 @@ ${formatMinutes(totalBreak)}
         // ===========================
 
 
-        function login() {
-
+        async function login() {
 
             password = document.getElementById(
                 "passwordInput"
             ).value;
 
 
-
             if (password == "") {
 
                 showMessage(
-                    "Password required",
+                    "❌ Password required",
                     "error"
                 );
 
@@ -1391,21 +1389,68 @@ ${formatMinutes(totalBreak)}
             }
 
 
-
-            document.getElementById(
-                "loginBox"
-            ).classList.add("hidden");
-
-
-            document.getElementById(
-                "app"
-            ).classList.remove("hidden");
+            showMessage(
+                "🔄 Loading configuration...",
+                "warning"
+            );
 
 
-            await loadConfig();
+            try {
 
 
-            loadData();
+                await loadConfig();
+
+
+                showMessage(
+                    "✔ Configuration loaded",
+                    "success"
+                );
+
+
+
+                showMessage(
+                    "🔄 Loading work data...",
+                    "warning"
+                );
+
+
+                await loadData();
+
+
+
+                document.getElementById(
+                    "loginBox"
+                ).classList.add("hidden");
+
+
+                document.getElementById(
+                    "app"
+                ).classList.remove("hidden");
+
+
+
+                showMessage(
+                    "✔ Planner opened successfully",
+                    "success"
+                );
+
+
+            }
+
+
+            catch (error) {
+
+
+                showMessage(
+                    "❌ Login failed: " + error.message,
+                    "error"
+                );
+
+
+                console.log(error);
+
+
+            }
 
 
         }
