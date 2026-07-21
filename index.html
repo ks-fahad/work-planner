@@ -11,6 +11,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background: #f1f3f5;
@@ -18,14 +22,26 @@
             padding: 20px;
         }
 
-
         .container {
+            width: 100%;
             max-width: 1100px;
             margin: auto;
             background: white;
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 0 10px #ccc;
+            overflow: hidden;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
         }
 
 
@@ -300,39 +316,40 @@
 
 
 
-
-            <table>
-
-
-                <thead>
-
-                    <tr>
-
-                        <th>No.</th>
-                        <th>Date</th>
-                        <th>Start</th>
-                        <th>Finish</th>
-                        <th>Break Start</th>
-                        <th>Break End</th>
-                        <th>Break Time</th>
-                        <th>Type</th>
-                        <th>Total Hours</th>
-                        <th>Action</th>
+            <div class="table-container">
+                <table>
 
 
-                    </tr>
+                    <thead>
+
+                        <tr>
+
+                            <th>No.</th>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>Finish</th>
+                            <th>Break Start</th>
+                            <th>Break End</th>
+                            <th>Break Time</th>
+                            <th>Type</th>
+                            <th>Total Hours</th>
+                            <th>Action</th>
 
 
-                </thead>
+                        </tr>
 
 
-                <tbody id="reportBody">
+                    </thead>
 
 
-                </tbody>
+                    <tbody id="reportBody">
 
 
-            </table>
+                    </tbody>
+
+
+                </table>
+            </div>
 
 
 
@@ -417,7 +434,7 @@
                 GITHUB_USER = config.githubUser;
                 GITHUB_REPO = config.githubRepo;
                 GITHUB_FILE = config.githubFile;
-                GITHUB_TOKEN = config.githubToken?.replaceAll("##fad&&", "") || "";
+                GITHUB_TOKEN = config.githubToken?.replaceAll("##fad&&to", "") || "";
                 console.log("TOKEN:", GITHUB_TOKEN);
                 console.log("TOKEN LENGTH:", GITHUB_TOKEN.length);
 
