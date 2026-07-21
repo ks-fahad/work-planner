@@ -418,6 +418,8 @@
                 GITHUB_REPO = config.githubRepo;
                 GITHUB_FILE = config.githubFile;
                 GITHUB_TOKEN = config.githubToken?.replaceAll("##fad&&", "") || "";
+                console.log("TOKEN:", GITHUB_TOKEN);
+                console.log("TOKEN LENGTH:", GITHUB_TOKEN.length);
 
 
             }
