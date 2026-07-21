@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Encrypted Work Planner</title>
+    <title>Work Planner</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
@@ -96,18 +96,36 @@
             border-radius: 5px;
         }
 
+        .time-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .time-field {
+            flex: 1;
+        }
+
+        .time-field input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
 
         .hidden {
             display: none;
         }
 
 
-        table {
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
 
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-
+            min-width: 900px;
         }
 
 
@@ -146,6 +164,76 @@
             margin: 2px;
 
         }
+
+        .wpillus-calendar {
+            margin-top: 20px;
+            max-width: 100%;
+            /* max-width: 520px; */
+            padding: 30px;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, .12);
+        }
+
+
+        /* top bar */
+
+        .wpillus-header {
+            height: 60px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #047857, #10B981);
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            gap: 12px;
+        }
+
+
+        .wpillus-header div {
+            width: 35%;
+            height: 14px;
+            background: white;
+            opacity: .9;
+            border-radius: 20px;
+        }
+
+
+        .wpillus-header span {
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            opacity: .8;
+        }
+
+
+        /* blocks */
+
+        .wpillus-grid {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 14px;
+        }
+
+
+        .wpillus-grid i {
+            height: 45px;
+            border-radius: 16px;
+            background: #D1FAE5;
+            display: block;
+        }
+
+
+        .wpillus-grid .active {
+            background: linear-gradient(135deg, #047857, #10B981);
+            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.35);
+        }
+
+
+        .wpillus-grid .fade {
+            opacity: .4;
+        }
     </style>
 
 
@@ -158,7 +246,7 @@
     <div class="container">
 
 
-        <h1>Encrypted Work Planner</h1>
+        <h1>Work Planner</h1>
 
 
 
@@ -179,7 +267,7 @@
 
 
             <label>
-                Encryption Password
+                Enter Password
             </label>
 
             <input type="password" id="passwordInput" placeholder="Password">
@@ -188,6 +276,24 @@
             <button onclick="login()">
                 Open
             </button>
+
+            <div class="wpillus-calendar">
+
+                <div class="wpillus-header">
+                    <div></div>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <div class="wpillus-grid">
+                    <i class="fade"></i><i class="fade"></i><i class="fade"></i><i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i><i class="active"></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i><i></i><i class="fade"></i><i class="fade"></i>
+                </div>
+
+            </div>
 
 
         </div>
@@ -209,17 +315,17 @@
 
                 <input type="date" id="date">
 
+                <div class="time-row">
+                    <div class="time-field">
+                        <label>Start Time</label>
+                        <input type="time" id="start">
+                    </div>
 
-
-                <label>Start Time</label>
-
-                <input type="time" id="start">
-
-
-
-                <label>Finish Time</label>
-
-                <input type="time" id="finish">
+                    <div class="time-field">
+                        <label>Finish Time</label>
+                        <input type="time" id="finish">
+                    </div>
+                </div>
 
 
 
@@ -241,20 +347,18 @@
 
 
                 <div id="breakArea" class="hidden">
+                    <div class="time-row">
+                        <div class="time-field">
+                            <label> Break Start</label>
+                            <input type="time" id="breakStart">
+                        </div>
 
+                        <div class="time-field">
+                            <label>Break End</label>
+                            <input type="time" id="breakEnd">
+                        </div>
+                    </div>
 
-                    <label>
-                        Break Start
-                    </label>
-
-                    <input type="time" id="breakStart">
-
-
-                    <label>
-                        Break End
-                    </label>
-
-                    <input type="time" id="breakEnd">
 
 
                 </div>
@@ -300,39 +404,40 @@
 
 
 
-
-            <table>
-
-
-                <thead>
-
-                    <tr>
-
-                        <th>No.</th>
-                        <th>Date</th>
-                        <th>Start</th>
-                        <th>Finish</th>
-                        <th>Break Start</th>
-                        <th>Break End</th>
-                        <th>Break Time</th>
-                        <th>Type</th>
-                        <th>Total Hours</th>
-                        <th>Action</th>
+            <div class="table-container">
+                <table>
 
 
-                    </tr>
+                    <thead>
+
+                        <tr>
+
+                            <th>No.</th>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>Finish</th>
+                            <th>Break Start</th>
+                            <th>Break End</th>
+                            <th>Break Time</th>
+                            <th>Type</th>
+                            <th>Total Hours</th>
+                            <th>Action</th>
 
 
-                </thead>
+                        </tr>
 
 
-                <tbody id="reportBody">
+                    </thead>
 
 
-                </tbody>
+                    <tbody id="reportBody">
 
 
-            </table>
+                    </tbody>
+
+
+                </table>
+            </div>
 
 
 
@@ -356,6 +461,10 @@
 
             <button onclick="retryGitHubSave()" class="secondary">
                 Retry Save
+            </button>
+
+            <button onclick="location.reload();" class="danger">
+                Log Out
             </button>
 
 
@@ -409,15 +518,12 @@
 
                 console.log("Config loaded");
 
-                console.log(config.githubUser);
-                console.log(config.githubRepo);
-
 
                 // Use values
                 GITHUB_USER = decrypt(config.githubUser);
                 GITHUB_REPO = decrypt(config.githubRepo);
                 GITHUB_FILE = decrypt(config.githubFile);
-                GITHUB_TOKEN = decrypt(config.githubToken)?.replaceAll("##fad&&", "") || "";
+                GITHUB_TOKEN = decrypt(config.githubToken)?.replaceAll("##fad&&to", "") || "";
 
 
             }
@@ -933,72 +1039,6 @@ Do you want to update?
 
 
 
-
-
-        // ===========================
-        // DELETE RECORD
-        // ===========================
-
-
-        function deleteRecord(index) {
-
-
-
-            let r = records[index];
-
-
-
-            let ok = confirm(
-
-                "Delete this record?\n\n" +
-                decrypt(r.date) +
-                "\n" +
-                decrypt(r.start) +
-                " - " +
-                decrypt(r.finish)
-
-            );
-
-
-
-            if (!ok) {
-
-
-                showMessage(
-                    "Delete cancelled",
-                    "warning"
-                );
-
-
-                return;
-
-
-            }
-
-
-
-            records.splice(index, 1);
-
-
-
-            showMonth();
-
-
-            loadMonths();
-
-
-
-            showMessage(
-                "Deleted successfully"
-            );
-
-
-
-        }
-
-
-
-
         // ===========================
         // SHOW MONTH REPORT
         // ===========================
@@ -1123,11 +1163,6 @@ Do you want to update?
 <button class="small-btn"
 onclick="editRecord(${index})">
 Edit
-</button>
-
-<button class="small-btn danger"
-onclick="deleteRecord(${index})">
-Delete
 </button>
 
 `;
