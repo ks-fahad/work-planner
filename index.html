@@ -1415,6 +1415,13 @@ ${formatMinutes(totalBreak)}
 
                 .then(data => {
 
+                    data.sort((a, b) => {
+                        const dateA = new Date(decrypt(a.date));
+                        const dateB = new Date(decrypt(b.date));
+
+                        return dateA - dateB;
+                    });
+
 
                     records = data;
 
@@ -1449,7 +1456,6 @@ ${formatMinutes(totalBreak)}
 
 
         }
-
 
 
 
