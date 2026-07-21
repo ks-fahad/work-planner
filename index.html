@@ -1209,140 +1209,6 @@ ${formatMinutes(totalBreak)}
 
 
 
-        async function saveToGitHub() {
-
-
-
-            const url =
-
-                `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
-
-
-
-            let sha = "";
-
-
-
-            // GET CURRENT FILE SHA
-
-
-            let old = await fetch(url, {
-
-                headers: {
-
-                    "Authorization":
-                        "Bearer " + GITHUB_TOKEN
-
-                }
-
-
-            });
-
-
-
-            if (old.ok) {
-
-
-                let oldData = await old.json();
-
-
-                sha = oldData.sha;
-
-
-            }
-
-
-
-
-
-
-            let content = btoa(
-                unescape(
-                    encodeURIComponent(
-                        encryptedJSON()
-                    )
-                )
-            );
-
-
-
-
-
-
-            let response = await fetch(url, {
-
-
-                method: "PUT",
-
-
-                headers: {
-
-
-                    "Authorization":
-                        "Bearer " + GITHUB_TOKEN,
-
-
-                    "Content-Type":
-                        "application/json"
-
-
-                },
-
-
-
-                body: JSON.stringify({
-
-
-                    message:
-                        "Update work planner data",
-
-
-                    content: content,
-
-
-                    sha: sha
-
-
-                })
-
-
-
-            });
-
-
-
-
-
-            if (response.ok) {
-
-
-                showMessage(
-                    "Saved to GitHub successfully"
-                );
-
-
-            }
-
-            else {
-
-
-                showMessage(
-                    "GitHub save failed",
-                    "error"
-                );
-
-
-            }
-
-
-
-        }
-
-
-
-
-
-
         // ===========================
         // MESSAGE SYSTEM
         // ===========================
@@ -1513,47 +1379,37 @@ ${formatMinutes(totalBreak)}
         // ===========================
 
 
-        function loadData() {
+        async function loadData() {
 
+            try {
 
-            fetch(GITHUB_FILE)
+                let response = await fetch(GITHUB_FILE);
 
-                .then(r => r.json())
+                if (!response.ok) {
+                    throw new Error("Database file not found");
+                }
 
-                .then(data => {
+                records = await response.json();
 
+                loadMonths();
+                showMonth();
 
-                    records = data;
+                showMessage(
+                    "Database loaded successfully"
+                );
 
+            }
 
-                    loadMonths();
+            catch (error) {
 
-                    showMonth();
+                records = [];
 
+                showMessage(
+                    "New database created",
+                    "warning"
+                );
 
-
-                    showMessage(
-                        "Database loaded successfully"
-                    );
-
-
-                })
-
-
-                .catch(() => {
-
-
-                    records = [];
-
-
-                    showMessage(
-                        "New database created",
-                        "warning"
-                    );
-
-
-                });
-
+            }
 
         }
 
