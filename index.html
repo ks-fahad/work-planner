@@ -11,10 +11,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         body {
             font-family: Arial, sans-serif;
             background: #f1f3f5;
@@ -22,26 +18,14 @@
             padding: 20px;
         }
 
+
         .container {
-            width: 100%;
             max-width: 1100px;
             margin: auto;
             background: white;
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 0 10px #ccc;
-            overflow: hidden;
-        }
-
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 900px;
         }
 
 
@@ -316,40 +300,39 @@
 
 
 
-            <div class="table-container">
-                <table>
+
+            <table>
 
 
-                    <thead>
+                <thead>
 
-                        <tr>
+                    <tr>
 
-                            <th>No.</th>
-                            <th>Date</th>
-                            <th>Start</th>
-                            <th>Finish</th>
-                            <th>Break Start</th>
-                            <th>Break End</th>
-                            <th>Break Time</th>
-                            <th>Type</th>
-                            <th>Total Hours</th>
-                            <th>Action</th>
-
-
-                        </tr>
+                        <th>No.</th>
+                        <th>Date</th>
+                        <th>Start</th>
+                        <th>Finish</th>
+                        <th>Break Start</th>
+                        <th>Break End</th>
+                        <th>Break Time</th>
+                        <th>Type</th>
+                        <th>Total Hours</th>
+                        <th>Action</th>
 
 
-                    </thead>
+                    </tr>
 
 
-                    <tbody id="reportBody">
+                </thead>
 
 
-                    </tbody>
+                <tbody id="reportBody">
 
 
-                </table>
-            </div>
+                </tbody>
+
+
+            </table>
 
 
 
@@ -431,12 +414,10 @@
 
 
                 // Use values
-                GITHUB_USER = config.githubUser;
-                GITHUB_REPO = config.githubRepo;
-                GITHUB_FILE = config.githubFile;
-                GITHUB_TOKEN = config.githubToken?.replaceAll("##fad&&to", "") || "";
-                console.log("TOKEN:", GITHUB_TOKEN);
-                console.log("TOKEN LENGTH:", GITHUB_TOKEN.length);
+                GITHUB_USER = decrypt(config.githubUser);
+                GITHUB_REPO = decrypt(config.githubRepo);
+                GITHUB_FILE = decrypt(config.githubFile);
+                GITHUB_TOKEN = decrypt(config.githubToken)?.replaceAll("##fad&&", "") || "";
 
 
             }
@@ -1220,14 +1201,6 @@ ${formatMinutes(totalBreak)}
 
 
 
-
-
-        // ===========================
-        // GITHUB SAVE
-        // ===========================
-
-
-
         // ===========================
         // MESSAGE SYSTEM
         // ===========================
@@ -1398,37 +1371,47 @@ ${formatMinutes(totalBreak)}
         // ===========================
 
 
-        async function loadData() {
+        function loadData() {
 
-            try {
 
-                let response = await fetch(GITHUB_FILE);
+            fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${GITHUB_FILE}`)
 
-                if (!response.ok) {
-                    throw new Error("Database file not found");
-                }
+                .then(r => r.json())
 
-                records = await response.json();
+                .then(data => {
 
-                loadMonths();
-                showMonth();
 
-                showMessage(
-                    "Database loaded successfully"
-                );
+                    records = data;
 
-            }
 
-            catch (error) {
+                    loadMonths();
 
-                records = [];
+                    showMonth();
 
-                showMessage(
-                    "New database created",
-                    "warning"
-                );
 
-            }
+
+                    showMessage(
+                        "Database loaded successfully"
+                    );
+
+
+                })
+
+
+                .catch(() => {
+
+
+                    records = [];
+
+
+                    showMessage(
+                        "New database created",
+                        "warning"
+                    );
+
+
+                });
+
 
         }
 
@@ -1535,6 +1518,9 @@ ${formatMinutes(totalBreak)}
 
 
 
+        // ===========================
+        // GITHUB SAVE
+        // ===========================
 
         async function saveToGitHub() {
 
@@ -1568,22 +1554,18 @@ ${formatMinutes(totalBreak)}
 
 
 
-
-
                 const url =
-
                     `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
-
-
 
 
 
                 let sha = "";
 
+                let githubRecords = [];
 
 
-                // Get current file
 
+                // Get current file from GitHub
 
                 let old = await fetch(url, {
 
@@ -1612,14 +1594,93 @@ ${formatMinutes(totalBreak)}
                     sha = oldFile.sha;
 
 
+
+                    try {
+
+                        let decoded = decodeURIComponent(
+                            escape(
+                                atob(
+                                    oldFile.content
+                                )
+                            )
+                        );
+
+
+                        githubRecords = JSON.parse(decoded);
+
+
+                        if (!Array.isArray(githubRecords)) {
+
+                            githubRecords = [];
+
+                        }
+
+
+                    }
+
+                    catch (e) {
+
+                        githubRecords = [];
+
+                    }
+
+
                 }
 
 
 
 
 
+
+                // Merge records using date as primary key
+
+                records.forEach(newRecord => {
+
+
+                    let index = githubRecords.findIndex(
+                        oldRecord =>
+                            oldRecord.date === newRecord.date
+                    );
+
+
+
+                    if (index !== -1) {
+
+
+                        // Update only matching date
+
+                        githubRecords[index] = {
+
+                            ...githubRecords[index],
+
+                            ...newRecord
+
+                        };
+
+
+                    }
+
+                    else {
+
+
+                        // Add new record
+
+                        githubRecords.push(newRecord);
+
+
+                    }
+
+
+                });
+
+
+
+
+
+
+
                 let encryptedData = JSON.stringify(
-                    records,
+                    githubRecords,
                     null,
                     2
                 );
@@ -1660,7 +1721,6 @@ ${formatMinutes(totalBreak)}
                     body.sha = sha;
 
                 }
-
 
 
 
@@ -1765,12 +1825,7 @@ ${formatMinutes(totalBreak)}
             }
 
 
-
-
-
         }
-
-
 
 
 
