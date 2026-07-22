@@ -280,17 +280,18 @@
             <div class="wpillus-calendar">
 
                 <div class="wpillus-header">
-                    <div></div>
+                    <div id="currentMonthCalender"></div>
+                    <span></span>
                     <span></span>
                     <span></span>
                 </div>
 
-                <div class="wpillus-grid">
-                    <i class="fade"></i><i class="fade"></i><i class="fade"></i><i></i><i></i><i></i><i></i>
+                <div class="wpillus-grid" id="calendarGrid">
+                    <!-- <i class="fade"></i><i class="fade"></i><i class="fade"></i><i></i><i></i><i></i><i></i>
                     <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                     <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                     <i></i><i></i><i></i><i></i><i class="active"></i><i></i><i></i>
-                    <i></i><i></i><i></i><i></i><i></i><i class="fade"></i><i class="fade"></i>
+                    <i></i><i></i><i></i><i></i><i></i><i class="fade"></i><i class="fade"></i> -->
                 </div>
 
             </div>
@@ -502,6 +503,88 @@
         let GITHUB_TOKEN = " ";
 
         let config = {};
+
+        // ===========================
+        // CALENDAR Front
+
+        function loadCalendar() {
+
+            let grid = document.getElementById("calendarGrid");
+            monthYear = document.getElementById("currentMonthCalender");
+            grid.innerHTML = "";
+
+
+            let today = new Date();
+
+            let year = today.getFullYear();
+            let monthNumber = today.getMonth();
+
+
+            monthYear.innerHTML = today.toLocaleString("default", { month: "long", year: "numeric" });
+
+            monthYear.style.display = "flex";
+            monthYear.style.alignItems = "center";
+            monthYear.style.justifyContent = "center";
+
+            monthYear.style.fontSize = "12px";
+            monthYear.style.fontWeight = "500";
+
+            monthYear.style.color = "#9ca3af";
+
+            monthYear.style.overflow = "hidden";
+            monthYear.style.whiteSpace = "nowrap";
+            monthYear.style.textOverflow = "ellipsis";
+
+            // First day of current month
+            let firstDay = new Date(year, monthNumber, 1);
+
+
+            // Convert Sunday=0 to Monday=0
+            let mondayStart = (firstDay.getDay() + 6) % 7;
+
+
+            // Start date of calendar (Monday)
+            let startDate = new Date(year, monthNumber, 1);
+            startDate.setDate(startDate.getDate() - mondayStart);
+
+
+            let todayString = today.toISOString().split("T")[0];
+
+
+            // Create 35 blocks
+            for (let i = 0; i < 35; i++) {
+
+                let day = new Date(startDate);
+                day.setDate(startDate.getDate() + i);
+
+
+                let block = document.createElement("i");
+
+
+                // Fade days not in current month
+                if (day.getMonth() !== monthNumber) {
+                    block.classList.add("fade");
+                }
+
+
+                // Highlight today
+                if (day.toISOString().split("T")[0] === todayString) {
+                    block.classList.add("active");
+                    block.style.display = "flex";
+                    block.style.alignItems = "center";
+                    block.style.justifyContent = "center";
+                    block.style.color = "white";
+
+                    block.textContent = day.getDate();
+                }
+
+
+                grid.appendChild(block);
+            }
+        }
+        window.onload = function () {
+            loadCalendar();
+        };
 
         async function loadConfig() {
 
@@ -952,6 +1035,13 @@ Do you want to update?
 
             });
 
+            // Select current month if it exists
+            let currentMonth = new Date().toISOString().slice(0, 7);
+
+            if (months.includes(currentMonth)) {
+                select.value = currentMonth;
+            }
+
         }
 
 
@@ -1118,6 +1208,14 @@ Do you want to update?
 
                     let row = body.insertRow();
 
+                    // Get today's date in YYYY-MM-DD format
+                    let today = new Date().toISOString().split("T")[0];
+
+                    // Highlight today's row
+                    if (date === today) {
+                        row.style.backgroundColor = "#dbeafe";
+                    }
+
 
 
                     row.insertCell(0).innerHTML = count;
@@ -1207,8 +1305,6 @@ Total Break:
 ${formatMinutes(totalBreak)}
 
 `;
-
-
 
         }
 
