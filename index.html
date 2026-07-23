@@ -446,17 +446,17 @@
 
 
             </div>
-
+            <div style="margin-top: 10px;"></div>
 
             <div id="githubStatus" class="card">
 
-                GitHub status: Not saved
+                Status: Not saved
 
             </div>
-
+            <div style="margin-top: 10px;"></div>
 
             <button onclick="saveToGitHub()">
-                Save To GitHub
+                Save To Database
             </button>
 
 
@@ -548,7 +548,7 @@
             startDate.setDate(startDate.getDate() - mondayStart);
 
 
-            let todayString = today.toISOString().split("T")[0];
+            let todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
 
             // Create 35 blocks
@@ -566,9 +566,9 @@
                     block.classList.add("fade");
                 }
 
-
+                let dayString = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
                 // Highlight today
-                if (day.toISOString().split("T")[0] === todayString) {
+                if (dayString === todayString) {
                     block.classList.add("active");
                     block.style.display = "flex";
                     block.style.alignItems = "center";
@@ -680,7 +680,7 @@
 
             let breakMinutes = 0;
 
-            let breakType = "None";
+            let breakType = "No";
 
 
             let hasBreak = document.getElementById("hasBreak").value;
@@ -710,7 +710,7 @@
                     }
 
 
-                    breakType = "Manual";
+                    breakType = "Have";
 
 
                 }
@@ -723,7 +723,7 @@
 
                 breakMinutes = 30;
 
-                breakType = "Automatic";
+                breakType = "Auto";
 
 
             }
@@ -751,40 +751,24 @@
         // SAVE RECORD
         // ===========================
 
-
         function saveRecord() {
 
-
-
             let date = document.getElementById("date").value;
-
-
             let start = document.getElementById("start").value;
-
-
             let finish = document.getElementById("finish").value;
 
-
-
             if (!date || !start || !finish) {
-
 
                 showMessage(
                     "Date, start and finish are required",
                     "error"
                 );
 
-
                 return;
-
-
             }
 
 
-
             let result = calculateWork();
-
-
 
             if (!result) {
 
@@ -794,98 +778,10 @@
                 );
 
                 return;
-
             }
-
-
-
-
-
-            // CHECK DUPLICATE DATE
-
-
-            let existing = records.findIndex(r => {
-
-
-                return decrypt(r.date) == date;
-
-
-            });
-
-
-
-
-
-            if (existing >= 0 && editIndex == -1) {
-
-
-
-                let old = records[existing];
-
-
-                let oldText =
-
-                    `
-Existing data found:
-
-Date:
-${decrypt(old.date)}
-
-Start:
-${decrypt(old.start)}
-
-Finish:
-${decrypt(old.finish)}
-
-Break:
-${decrypt(old.breakStart)}
--
-${decrypt(old.breakEnd)}
-
-Total:
-${formatMinutes(
-                        Number(
-                            decrypt(old.totalMinutes)
-                        )
-                    )}
-
-Do you want to update?
-`;
-
-
-
-                let answer = confirm(oldText);
-
-
-
-                if (!answer) {
-
-
-                    showMessage(
-                        "Update cancelled",
-                        "warning"
-                    );
-
-
-                    return;
-
-
-                }
-
-
-                editIndex = existing;
-
-
-
-            }
-
-
-
-
 
 
             let record = {
-
 
                 date: encrypt(date),
 
@@ -893,81 +789,65 @@ Do you want to update?
 
                 finish: encrypt(finish),
 
-
                 breakStart: encrypt(
                     document.getElementById("breakStart").value
                 ),
-
 
                 breakEnd: encrypt(
                     document.getElementById("breakEnd").value
                 ),
 
-
                 breakMinutes: encrypt(
                     result.breakMinutes
                 ),
-
 
                 breakType: encrypt(
                     result.breakType
                 ),
 
-
                 totalMinutes: encrypt(
                     result.total
                 )
 
-
-
             };
 
+            if (records.find(r => decrypt(r.date) === date)) {
+                const proceed = window.confirm(
+                    "Update Confirmation\n\n" +
+                    "Date: " + date + "\n\n" +
+                    "An entry already exists for this date.\n" +
+                    "Updating will replace the existing entry.\n\n" +
+                    "Do you want to continue?"
+                );
+                if (!proceed) {
+                    return;
+                }
+            }
 
+            // Remove every record with the same date
+            records = records.filter(r => decrypt(r.date) !== date);
 
-
-
+            // Save the newest record
+            records.push(record);
 
             if (editIndex >= 0) {
-
-
-                records[editIndex] = record;
-
-
-                showMessage(
-                    "Updated successfully"
-                );
-
-
-            }
-            else {
-
-
-                records.push(record);
-
-
-                showMessage(
-                    "Saved successfully"
-                );
-
-
+                showMessage("Updated successfully");
+            } else {
+                showMessage("Saved successfully");
             }
 
 
+            // Reset edit mode
+            editIndex = -1;
 
 
             clearForm();
 
-
             loadMonths();
-
 
             showMonth();
 
-
-
         }
-
-
 
 
         // ===========================
@@ -1209,7 +1089,7 @@ Do you want to update?
                     let row = body.insertRow();
 
                     // Get today's date in YYYY-MM-DD format
-                    let today = new Date().toISOString().split("T")[0];
+                    let today = new Date().toLocaleDateString("en-CA");
 
                     // Highlight today's row
                     if (date === today) {
@@ -1289,19 +1169,25 @@ Edit
             ).innerHTML =
 
                 `
-<b>Monthly Summary</b>
+<b>Monthly Summary Report</b>
 <br>
-Working Days:
-${count}
-
+━━━━━━━━━━━━━━━━
 <br>
 
-Total Work Hours:
+<b>📅 Working Days</b>
+<br>
+${count} days
+
+<br><br>
+
+<b>⏰ Total Work Hours</b>
+<br>
 ${formatMinutes(totalHours)}
 
-<br>
+<br><br>
 
-Total Break:
+<b>☕ Total Break Duration</b>
+<br>
 ${formatMinutes(totalBreak)}
 
 `;
@@ -1661,15 +1547,12 @@ ${formatMinutes(totalBreak)}
 
         async function saveToGitHub() {
 
-
             try {
 
-
                 showGitHubStatus(
-                    "🔄 Saving to GitHub...",
+                    "🔄 Saving to Database...",
                     "warning"
                 );
-
 
 
                 if (
@@ -1678,10 +1561,9 @@ ${formatMinutes(totalBreak)}
                 ) {
 
                     showGitHubStatus(
-                        "⚠ GitHub token missing",
+                        "⚠ Database token missing",
                         "error"
                     );
-
 
                     lastSaveFailed = true;
 
@@ -1698,68 +1580,68 @@ ${formatMinutes(totalBreak)}
 
                 let sha = "";
 
-                let githubRecords = [];
+                let githubRecords = [...records];
 
 
 
-                // Get current file from GitHub
+
+                // Get SHA only (required to overwrite the file)
 
                 let old = await fetch(url, {
-
                     headers: {
-
-                        "Authorization":
-                            "Bearer " + GITHUB_TOKEN,
-
-                        "Accept":
-                            "application/vnd.github+json"
-
+                        "Authorization": "Bearer " + GITHUB_TOKEN,
+                        "Accept": "application/vnd.github+json"
                     }
+                });
+
+                if (old.ok) {
+                    let oldFile = await old.json();
+                    sha = oldFile.sha;
+                }
+
+                // Use only local records
+                githubRecords = [...records];
+
+
+
+                // ================================
+                // CHECK DUPLICATE DATES
+                // ================================
+
+                let dateCount = {};
+
+
+                githubRecords.forEach(r => {
+
+                    let d = r.date;
+
+                    dateCount[d] =
+                        (dateCount[d] || 0) + 1;
 
                 });
 
 
 
-
-
-                if (old.ok) {
-
-
-                    let oldFile = await old.json();
-
-
-                    sha = oldFile.sha;
+                let duplicateDates =
+                    Object.keys(dateCount).filter(
+                        d => dateCount[d] > 1
+                    );
 
 
 
-                    try {
-
-                        let decoded = decodeURIComponent(
-                            escape(
-                                atob(
-                                    oldFile.content
-                                )
-                            )
-                        );
+                if (duplicateDates.length > 0) {
 
 
-                        githubRecords = JSON.parse(decoded);
+                    showGitHubStatus(
 
+                        "⚠ Duplicate dates found: " +
+                        duplicateDates
+                            .map(d => decrypt(d))
+                            .join(", "),
 
-                        if (!Array.isArray(githubRecords)) {
+                        "warning"
 
-                            githubRecords = [];
-
-                        }
-
-
-                    }
-
-                    catch (e) {
-
-                        githubRecords = [];
-
-                    }
+                    );
 
 
                 }
@@ -1769,70 +1651,35 @@ ${formatMinutes(totalBreak)}
 
 
 
-                // Merge records using date as primary key
-
-                records.forEach(newRecord => {
 
 
-                    let index = githubRecords.findIndex(
-                        oldRecord =>
-                            oldRecord.date === newRecord.date
+
+
+
+
+                // ================================
+                // SAVE DATA
+                // ================================
+
+
+                let encryptedData =
+                    JSON.stringify(
+                        githubRecords,
+                        null,
+                        2
                     );
 
 
 
-                    if (index !== -1) {
 
-
-                        // Update only matching date
-
-                        githubRecords[index] = {
-
-                            ...githubRecords[index],
-
-                            ...newRecord
-
-                        };
-
-
-                    }
-
-                    else {
-
-
-                        // Add new record
-
-                        githubRecords.push(newRecord);
-
-
-                    }
-
-
-                });
-
-
-
-
-
-
-
-                let encryptedData = JSON.stringify(
-                    githubRecords,
-                    null,
-                    2
-                );
-
-
-
-
-
-                let encoded = btoa(
-                    unescape(
-                        encodeURIComponent(
-                            encryptedData
+                let encoded =
+                    btoa(
+                        unescape(
+                            encodeURIComponent(
+                                encryptedData
+                            )
                         )
-                    )
-                );
+                    );
 
 
 
@@ -1853,6 +1700,8 @@ ${formatMinutes(totalBreak)}
 
 
 
+
+
                 if (sha != "") {
 
                     body.sha = sha;
@@ -1863,38 +1712,49 @@ ${formatMinutes(totalBreak)}
 
 
 
-
-                let response = await fetch(url, {
-
-                    method: "PUT",
+                let response =
+                    await fetch(url, {
 
 
-                    headers: {
-
-                        "Authorization":
-                            "Bearer " + GITHUB_TOKEN,
-
-                        "Accept":
-                            "application/vnd.github+json",
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-
-                    body:
-                        JSON.stringify(body)
-
-
-                });
+                        method:
+                            "PUT",
 
 
 
+                        headers: {
+
+
+                            "Authorization":
+                                "Bearer " + GITHUB_TOKEN,
+
+
+                            "Accept":
+                                "application/vnd.github+json",
+
+
+                            "Content-Type":
+                                "application/json"
+
+
+                        },
 
 
 
-                let result = await response.json();
+                        body:
+                            JSON.stringify(body)
+
+
+                    });
+
+
+
+
+
+
+
+                let result =
+                    await response.json();
+
 
 
 
@@ -1906,9 +1766,13 @@ ${formatMinutes(totalBreak)}
                     lastSaveFailed = false;
 
 
+
                     showGitHubStatus(
-                        "✔ Saved successfully to GitHub",
+
+                        "✔ Saved successfully to Database",
+
                         "success"
+
                     );
 
 
@@ -1920,9 +1784,10 @@ ${formatMinutes(totalBreak)}
                     lastSaveFailed = true;
 
 
+
                     showGitHubStatus(
 
-                        "❌ GitHub error: " +
+                        "❌ Database error: " +
                         result.message,
 
                         "error"
@@ -1930,10 +1795,12 @@ ${formatMinutes(totalBreak)}
                     );
 
 
+
                     console.log(result);
 
 
                 }
+
 
 
 
@@ -1950,7 +1817,7 @@ ${formatMinutes(totalBreak)}
 
                 showGitHubStatus(
 
-                    "❌ Cannot connect to GitHub: " +
+                    "❌ Cannot connect to Database: " +
                     error.message,
 
                     "error"
@@ -1958,13 +1825,10 @@ ${formatMinutes(totalBreak)}
                 );
 
 
-
             }
 
 
         }
-
-
 
 
 
