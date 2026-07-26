@@ -1168,7 +1168,10 @@
                         let totalRow = body.insertRow();
 
                         totalRow.insertCell(0).colSpan = 9;
-                        totalRow.cells[0].style.border = '2px solid #30525C';
+                        totalRow.cells[0].style.border = 'none';
+                        totalRow.cells[0].style.textAlign = 'left';
+                        totalRow.cells[0].style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.1)';
+                        totalRow.cells[0].style.fontWeight = 'bold';
                         totalRow.cells[0].innerHTML =
                             "Weekly Total Hours: " + formatMinutes(weekTotal);
                     }
@@ -1221,7 +1224,9 @@
 
                     let d_now = new Date(date);
 
-                    row.insertCell(1).innerHTML = d_now.toLocaleDateString("en-GB", {
+                    let dateCell= row.insertCell(1);
+
+                    dateCell.innerHTML = d_now.toLocaleDateString("en-GB", {
                         day: "2-digit"
                     }) +
                         ", " +
@@ -1253,10 +1258,10 @@
                         breakTotalInfo.innerHTML = formatMinutes(breakMinutes);
                     }
                     else {
-                    breakTotalInfo.innerHTML = "⚪";
+                        breakTotalInfo.innerHTML = "⚪";
                     }
 
-                    let totalWorkperDay=row.insertCell(7);
+                    let totalWorkperDay = row.insertCell(7);
                     totalWorkperDay.innerHTML = formatMinutes(worked);
                     totalWorkperDay.style.fontWeight = "bold";
 
@@ -1291,10 +1296,18 @@ Delete
                     // Highlight today's row
                     if (date === today) {
                         cellIndex.innerHTML = "✅";
+                        dateCell.innerHTML = "Today";
 
-                        row.style.backgroundColor = "#30525C";
-                        row.style.color = "white";
+                        // row.style.backgroundColor = "#30525C";
+                        // row.style.color = "white";
                         row.style.fontWeight = "bold";
+                        for (let i = 0; i < row.cells.length; i++) {
+                            row.cells[i].style.border = "1px solid #16a34a";
+                            row.cells[i].style.borderLeft = "5px solid #16a34a";
+                             row.cells[i].style.borderBottom = "5px solid #16a34a";
+                        }
+                        
+
                     }
                     else {
                         cellIndex.innerHTML = count;
@@ -1324,7 +1337,10 @@ Delete
                 let totalRow = body.insertRow();
 
                 totalRow.insertCell(0).colSpan = 9;
-                totalRow.cells[0].style.border = '2px solid #30525C';
+                totalRow.cells[0].style.border = 'none';
+                totalRow.cells[0].style.textAlign = 'left';
+                totalRow.cells[0].style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.1)';
+                totalRow.cells[0].style.fontWeight = 'bold';
                 totalRow.cells[0].innerHTML =
                     "Weekly Total Hours: " + formatMinutes(weekTotal);
             }
@@ -2121,7 +2137,6 @@ border-radius:10px;
 
             let contract =
                 Number(document.getElementById("contractHours").value);
-            console.log("Worked Hours:", workedHours, "Contract Hours:", contract);
 
 
             if (workedHours > contract) {
@@ -2214,110 +2229,246 @@ border-radius:10px;
 
 
 
-            document.getElementById("salaryResult").innerHTML = `
-
+            document.getElementById("salaryResult").innerHTML =`
 <div style="
     font-family:Arial,sans-serif;
     background:#ffffff;
     border-radius:15px;
     padding:20px;
     box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    width:100%;
+    max-width:500px;
+    box-sizing:border-box;
+    margin:auto;
+    overflow:hidden;
 ">
 
 <h3 style="
     margin:0 0 15px;
     color:#1e293b;
+    font-size:20px;
 ">
 💰 Salary Result
 </h3>
 
 
 <div style="
-display:flex;
-justify-content:space-between;
-padding:8px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:8px 0;
+    min-width:0;
 ">
-<span>⏰ Normal Hours</span>
-<b>${normalHours.toFixed(2)} h</b>
+
+<span style="
+    flex:1;
+    min-width:0;
+    overflow-wrap:anywhere;
+">
+⏰ Normal Hours
+</span>
+
+<b style="
+    max-width:45%;
+    text-align:right;
+    white-space:normal;
+    overflow-wrap:anywhere;
+">
+${normalHours.toFixed(2)} h
+</b>
+
 </div>
 
 
+
 <div style="
-display:flex;
-justify-content:space-between;
-padding:8px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:8px 0;
+    min-width:0;
 ">
-<span>➕ Extra Hours</span>
-<b>${extraHours.toFixed(2)} h</b>
+
+<span style="
+    flex:1;
+    min-width:0;
+    overflow-wrap:anywhere;
+">
+➕ Extra Hours
+</span>
+
+<b style="
+    max-width:45%;
+    text-align:right;
+    white-space:normal;
+    overflow-wrap:anywhere;
+">
+${extraHours.toFixed(2)} h
+</b>
+
 </div>
 
 
-<hr style="border:none;border-top:1px solid #e5e7eb;">
+
+<hr style="
+    border:none;
+    border-top:1px solid #e5e7eb;
+">
+
 
 
 <div style="
-display:flex;
-justify-content:space-between;
-padding:8px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:8px 0;
+    min-width:0;
 ">
-<span>💼 Normal Pay</span>
-<b>€ ${normalPay.toFixed(2)}</b>
+
+<span style="
+    flex:1;
+    min-width:0;
+    overflow-wrap:anywhere;
+">
+💼 Normal Pay
+</span>
+
+<b style="
+    max-width:45%;
+    text-align:right;
+    white-space:normal;
+    overflow-wrap:anywhere;
+">
+€ ${normalPay.toFixed(2)}
+</b>
+
 </div>
 
 
+
 <div style="
-display:flex;
-justify-content:space-between;
-padding:8px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:8px 0;
+    min-width:0;
 ">
-<span>⭐ Extra Pay (${extraHours.toFixed(2)} h)</span>
-<b>€ ${extraPay.toFixed(2)}</b>
+
+<span style="
+    flex:1;
+    min-width:0;
+    overflow-wrap:anywhere;
+">
+⭐ Extra Pay (${extraHours.toFixed(2)} h)
+</span>
+
+<b style="
+    max-width:45%;
+    text-align:right;
+    white-space:normal;
+    overflow-wrap:anywhere;
+">
+€ ${extraPay.toFixed(2)}
+</b>
+
 </div>
 
 
+
 <div style="
-display:flex;
-justify-content:space-between;
-padding:8px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:8px 0;
+    min-width:0;
 ">
-<span>📊 Gross Salary</span>
-<b>€ ${grossSalary.toFixed(2)}</b>
+
+<span style="
+    flex:1;
+    min-width:0;
+    overflow-wrap:anywhere;
+">
+📊 Gross Salary
+</span>
+
+<b style="
+    max-width:45%;
+    text-align:right;
+    white-space:normal;
+    overflow-wrap:anywhere;
+">
+€ ${grossSalary.toFixed(2)}
+</b>
+
 </div>
 
 
+
 <div style="
-display:flex;
-justify-content:space-between;
-padding:8px 0;
-color:#dc2626;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:8px 0;
+    min-width:0;
+    color:#dc2626;
 ">
-<span>🧾 Tax</span>
-<b>- € ${tax.toFixed(2)}</b>
+
+<span style="
+    flex:1;
+    min-width:0;
+    overflow-wrap:anywhere;
+">
+🧾 Tax
+</span>
+
+<b style="
+    max-width:45%;
+    text-align:right;
+    white-space:normal;
+    overflow-wrap:anywhere;
+">
+- € ${tax.toFixed(2)}
+</b>
+
 </div>
 
 
-<hr style="border:none;border-top:2px solid #2563eb;">
+
+<hr style="
+    border:none;
+    border-top:2px solid #2563eb;
+">
+
 
 
 <div style="
-background:#eff6ff;
-padding:15px;
-border-radius:12px;
-text-align:center;
+    background:#eff6ff;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+    width:100%;
+    box-sizing:border-box;
 ">
 
 <div style="
-font-size:14px;
-color:#64748b;
+    font-size:14px;
+    color:#64748b;
 ">
 Final Salary
 </div>
 
 
 <h2 style="
-margin:5px 0 0;
-color:#2563eb;
-font-size:28px;
+    margin:5px 0 0;
+    color:#2563eb;
+    font-size:clamp(22px,6vw,28px);
+    overflow-wrap:anywhere;
 ">
 € ${finalSalary.toFixed(2)}
 </h2>
@@ -2327,7 +2478,6 @@ font-size:28px;
 
 
 </div>
-
 `;
 
         }
