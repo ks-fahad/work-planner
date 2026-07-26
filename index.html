@@ -445,7 +445,6 @@
                             <th>Break Start</th>
                             <th>Break End</th>
                             <th>Break Time</th>
-                            <th>Type</th>
                             <th>Total Hours</th>
                             <th>Action</th>
 
@@ -961,11 +960,18 @@
         function editRecord(index) {
 
 
+            document.getElementById("app").scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+
             let r = records[index];
 
 
 
             editIndex = index;
+
 
 
 
@@ -1091,6 +1097,14 @@
                 "reportBody"
             );
 
+            records.sort((a, b) => {
+
+                const dateA = new Date(decrypt(a.date));
+                const dateB = new Date(decrypt(b.date));
+
+                return dateA - dateB;
+
+            });
 
 
             body.innerHTML = "";
@@ -1103,21 +1117,72 @@
 
             let count = 0;
 
+            const weekColors = [
+                "#fef9c3", // light yellow
+                "#dbeafe", // light blue
+                "#dcfce7", // light green
+                "#fae8ff", // light purple
+                "#fee2e2", // light red
+                "#f3f4f6"  // light gray
+            ];
+
+            let currentWeek = "";
+            let weekIndex = -1;
+            let weekTotal = 0;
+
 
 
             records.forEach((r, index) => {
 
-
-
                 let date = decrypt(r.date);
+
+                if (!date.startsWith(month)) return;
+
+                count++;
+
+                let start = decrypt(r.start);
+                let finish = decrypt(r.finish);
+
+                let bs = decrypt(r.breakStart);
+                let be = decrypt(r.breakEnd);
+
+                let breakMinutes = Number(decrypt(r.breakMinutes));
+                let breakType = decrypt(r.breakType);
+                let worked = Number(decrypt(r.totalMinutes));
+
+                // Monday of current week
+                let d = new Date(date);
+                let day = d.getDay(); // Sunday=0
+                let diff = (day === 0 ? -6 : 1 - day);
+
+                let monday = new Date(d);
+                monday.setDate(d.getDate() + diff);
+
+                let weekKey = monday.toISOString().split("T")[0];
+
+                // New week
+                if (weekKey !== currentWeek) {
+
+                    // Show previous week total
+                    if (currentWeek !== "") {
+                        let totalRow = body.insertRow();
+
+                        totalRow.insertCell(0).colSpan = 9;
+                        totalRow.cells[0].style.border = '2px solid #30525C';
+                        totalRow.cells[0].innerHTML =
+                            "Weekly Total Hours: " + formatMinutes(weekTotal);
+                    }
+
+                    currentWeek = weekKey;
+                    weekIndex++;
+                    weekTotal = 0;
+                }
+
+                weekTotal += worked;
 
 
 
                 if (date.startsWith(month)) {
-
-
-
-                    count++;
 
 
 
@@ -1154,13 +1219,23 @@
 
                     let cellIndex = row.insertCell(0);
 
-                    row.insertCell(1).innerHTML = date;
+                    let d_now = new Date(date);
+
+                    row.insertCell(1).innerHTML = d_now.toLocaleDateString("en-GB", {
+                        day: "2-digit"
+                    }) +
+                        ", " +
+                        d_now.toLocaleDateString("en-GB", {
+                            weekday: "long"
+                        });
 
 
-                    row.insertCell(2).innerHTML = start;
-
-
-                    row.insertCell(3).innerHTML = finish;
+                    let startWork = row.insertCell(2);
+                    let finishWork = row.insertCell(3);
+                    startWork.innerHTML = start;
+                    finishWork.innerHTML = finish;
+                    startWork.style.fontWeight = "bold";
+                    finishWork.style.fontWeight = "bold";
 
 
                     row.insertCell(4).innerHTML = bs || "⚪";
@@ -1169,22 +1244,27 @@
                     row.insertCell(5).innerHTML = be || "⚪";
 
 
-                    row.insertCell(6).innerHTML =
-                        formatMinutes(breakMinutes);
+                    let breakTotalInfo = row.insertCell(6);
+
+                    if (breakType === "Auto") {
+                        breakTotalInfo.innerHTML = "30 m (Auto)";
+                    }
+                    else if (breakType === "Have") {
+                        breakTotalInfo.innerHTML = formatMinutes(breakMinutes);
+                    }
+                    else {
+                    breakTotalInfo.innerHTML = "⚪";
+                    }
+
+                    let totalWorkperDay=row.insertCell(7);
+                    totalWorkperDay.innerHTML = formatMinutes(worked);
+                    totalWorkperDay.style.fontWeight = "bold";
 
 
-                    row.insertCell(7).innerHTML =
-                        breakType;
-
-
-                    row.insertCell(8).innerHTML =
-                        formatMinutes(worked);
 
 
 
-
-
-                    let action = row.insertCell(9);
+                    let action = row.insertCell(8);
 
 
 
@@ -1202,9 +1282,8 @@ Delete
 </button>
 
 `;
-                    if (count % 2 === 0) {
-                        row.style.backgroundColor = "#dbeafe";
-                    }
+                    row.style.backgroundColor =
+                        weekColors[weekIndex % weekColors.length];
 
                     // Get today's date in YYYY-MM-DD format
                     let today = new Date().toLocaleDateString("en-CA");
@@ -1212,10 +1291,10 @@ Delete
                     // Highlight today's row
                     if (date === today) {
                         cellIndex.innerHTML = "✅";
-                        row.style.backgroundColor = "#F0FDF4";
-                        row.querySelectorAll("td").forEach(cell => {
-                            cell.style.border = "1px solid #60a5fa";
-                        });
+
+                        row.style.backgroundColor = "#30525C";
+                        row.style.color = "white";
+                        row.style.fontWeight = "bold";
                     }
                     else {
                         cellIndex.innerHTML = count;
@@ -1240,44 +1319,159 @@ Delete
 
 
 
+            if (currentWeek !== "") {
 
+                let totalRow = body.insertRow();
+
+                totalRow.insertCell(0).colSpan = 9;
+                totalRow.cells[0].style.border = '2px solid #30525C';
+                totalRow.cells[0].innerHTML =
+                    "Weekly Total Hours: " + formatMinutes(weekTotal);
+            }
 
             document.getElementById(
                 "summary"
             ).innerHTML =
 
                 `
-<div style="font-family: Arial, sans-serif; line-height: 1.7; color: #333;">
+<div style="font-family:Arial,sans-serif;">
 
-    <h2 style="margin:0;">
-        📊 Monthly Summary Report
-    </h2>
+<h2 style="margin:0;">
+    📊 Monthly Summary Report
+</h2>
 
-    <hr style="border:none; border-top:1px solid #ddd; margin:12px 0 18px;">
+<hr style="border:none; border-top:1px solid #ddd; margin:12px 0 18px;">
 
-    <div style="margin-bottom:18px;">
-        <div style="font-size:13px; color:#6b7280;">📅 Working Days</div>
-        <div style="font-size:22px; font-weight:bold;">
-            ${count} days
-        </div>
+
+<div style="margin-bottom:18px;">
+    <div style="font-size:13px; color:#6b7280;">
+        📅 Working Days
     </div>
-
-    <div style="margin-bottom:18px;">
-        <div style="font-size:13px; color:#6b7280;">⏰ Total Work Hours</div>
-        <div style="font-size:22px; font-weight:bold;">
-            ${formatMinutes(totalHours)}
-        </div>
+    <div style="font-size:22px; font-weight:bold;">
+        ${count} days
     </div>
+</div>
 
-    <div style="margin-bottom:18px;">
-        <div style="font-size:13px; color:#6b7280;">☕ Total Break Duration</div>
-        <div style="font-size:22px; font-weight:bold;">
-            ${formatMinutes(totalBreak)}
-        </div>
+
+<div style="margin-bottom:18px;">
+    <div style="font-size:13px; color:#6b7280;">
+        ⏰ Total Work Hours
     </div>
+    <div style="font-size:22px; font-weight:bold;">
+        ${formatMinutes(totalHours)}
+    </div>
+</div>
+
+
+<div style="margin-bottom:18px;">
+    <div style="font-size:13px; color:#6b7280;">
+        ☕ Total Break Duration
+    </div>
+    <div style="font-size:22px; font-weight:bold;">
+        ${formatMinutes(totalBreak)}
+    </div>
+</div>
+
+
+<button 
+onclick="showSalaryBlock()"
+style="
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+"
+">
+Calculate Salary
+</button>
+
+
+<div id="salaryBlock"
+style="
+display:none;
+margin-top:20px;
+padding:20px;
+background:#f8fafc;
+border-radius:15px;
+border:1px solid #e5e7eb;
+">
+
+<h3 style="margin-top:0;">
+💰 Salary Calculator
+</h3>
+
+
+<div style="display:grid; gap:12px;">
+
+<span style="font-size:13px; color:#6b7280;">
+    Enter your contract details below to calculate your salary for this month.
+    <br>
+    Total Hours Worked: <strong>${(totalHours / 60).toFixed(2)} h</strong>
+</span>
+<input id="contractHours"
+type="number"
+placeholder="Contract Hours"
+oninput ="checkExtraHours(${totalHours})"
+style="padding:10px;border-radius:8px;border:1px solid #ccc;">
+
+
+<input id="salaryPerHour"
+type="number"
+placeholder="Salary Per Hour"
+style="padding:10px;border-radius:8px;border:1px solid #ccc;">
+
+
+<input id="taxPercent"
+type="number"
+placeholder="Tax Percentage"
+style="padding:10px;border-radius:8px;border:1px solid #ccc;">
+
+
+<div id="extraBox" style="display:none;">
+
+<input id="extraPercent"
+type="number"
+placeholder="Extra Hour Pay %"
+style="padding:10px;border-radius:8px;border:1px solid #ccc;width:100%;">
 
 </div>
 
+
+<button 
+onclick="calculateSalary(${totalHours})"
+style="
+padding:12px;
+border:none;
+border-radius:10px;
+background:#16a34a;
+color:white;
+font-size:16px;
+cursor:pointer;
+">
+Calculate
+</button>
+
+
+</div>
+
+
+<div id="salaryResult"
+style="
+margin-top:15px;
+padding:15px;
+background:white;
+border-radius:10px;
+">
+</div>
+
+
+</div>
+
+
+</div>
 `;
 
         }
@@ -1485,45 +1679,28 @@ Delete
 
                 .then(data => {
 
-                    data.sort((a, b) => {
-                        const dateA = new Date(decrypt(a.date));
-                        const dateB = new Date(decrypt(b.date));
-
-                        return dateA - dateB;
-                    });
-
-
                     records = data;
-
 
                     loadMonths();
 
                     showMonth();
 
-
-
                     showMessage(
                         "Database loaded successfully"
                     );
 
-
                 })
-
 
                 .catch(() => {
 
-
                     records = [];
-
 
                     showMessage(
                         "New database created",
                         "warning"
                     );
 
-
                 });
-
 
         }
 
@@ -1925,7 +2102,235 @@ Delete
 
         }
 
+        function showSalaryBlock() {
 
+            let block = document.getElementById("salaryBlock");
+
+            block.style.display = "block";
+
+            block.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        }
+
+        function checkExtraHours(totalHours) {
+
+            let workedHours = totalHours / 60;
+
+            let contract =
+                Number(document.getElementById("contractHours").value);
+            console.log("Worked Hours:", workedHours, "Contract Hours:", contract);
+
+
+            if (workedHours > contract) {
+
+                document.getElementById("extraBox")
+                    .style.display = "block";
+
+            }
+            else {
+
+                document.getElementById("extraBox")
+                    .style.display = "none";
+
+            }
+
+        }
+
+        function calculateSalary(totalHours) {
+
+            // Convert minutes to hours
+            let workedHours = totalHours / 60;
+
+
+            let contractHours =
+                Number(document.getElementById("contractHours").value);
+
+
+            let salaryPerHour =
+                Number(document.getElementById("salaryPerHour").value);
+
+
+            let taxPercent =
+                Number(document.getElementById("taxPercent").value);
+
+
+            let extraPercent =
+                Number(document.getElementById("extraPercent").value || 100);
+
+
+            if (!contractHours || !salaryPerHour || !taxPercent) {
+
+                document.getElementById("salaryResult").innerHTML = `
+        <div style="
+            padding:12px;
+            background:#fee2e2;
+            color:#b91c1c;
+            border-radius:8px;
+            font-weight:bold;
+        ">
+        ⚠️ Please fill all required fields.
+        </div>
+    `;
+
+                return;
+            }
+
+
+
+            let normalHours = Math.min(
+                workedHours,
+                contractHours
+            );
+
+
+            let extraHours = Math.max(
+                workedHours - contractHours,
+                0
+            );
+
+
+            let normalPay = normalHours * salaryPerHour;
+
+
+            let extraPay =
+                extraHours *
+                salaryPerHour *
+                ((extraPercent + 100) / 100);
+
+
+            let grossSalary =
+                normalPay + extraPay;
+
+            let tax =
+                normalPay *
+                (taxPercent / 100);
+
+
+            let finalSalary =
+                grossSalary - tax;
+
+
+
+            document.getElementById("salaryResult").innerHTML = `
+
+<div style="
+    font-family:Arial,sans-serif;
+    background:#ffffff;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+">
+
+<h3 style="
+    margin:0 0 15px;
+    color:#1e293b;
+">
+💰 Salary Result
+</h3>
+
+
+<div style="
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+">
+<span>⏰ Normal Hours</span>
+<b>${normalHours.toFixed(2)} h</b>
+</div>
+
+
+<div style="
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+">
+<span>➕ Extra Hours</span>
+<b>${extraHours.toFixed(2)} h</b>
+</div>
+
+
+<hr style="border:none;border-top:1px solid #e5e7eb;">
+
+
+<div style="
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+">
+<span>💼 Normal Pay</span>
+<b>€ ${normalPay.toFixed(2)}</b>
+</div>
+
+
+<div style="
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+">
+<span>⭐ Extra Pay (${extraHours.toFixed(2)} h)</span>
+<b>€ ${extraPay.toFixed(2)}</b>
+</div>
+
+
+<div style="
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+">
+<span>📊 Gross Salary</span>
+<b>€ ${grossSalary.toFixed(2)}</b>
+</div>
+
+
+<div style="
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+color:#dc2626;
+">
+<span>🧾 Tax</span>
+<b>- € ${tax.toFixed(2)}</b>
+</div>
+
+
+<hr style="border:none;border-top:2px solid #2563eb;">
+
+
+<div style="
+background:#eff6ff;
+padding:15px;
+border-radius:12px;
+text-align:center;
+">
+
+<div style="
+font-size:14px;
+color:#64748b;
+">
+Final Salary
+</div>
+
+
+<h2 style="
+margin:5px 0 0;
+color:#2563eb;
+font-size:28px;
+">
+€ ${finalSalary.toFixed(2)}
+</h2>
+
+
+</div>
+
+
+</div>
+
+`;
+
+        }
 
         function retryGitHubSave() {
 
