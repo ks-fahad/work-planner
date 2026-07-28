@@ -1236,7 +1236,7 @@
                         decrypt(r.totalMinutes)
                     );
 
-                    MobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors);
+                    mobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors);
 
 
                     totalHours += worked;
@@ -1412,9 +1412,8 @@ border-radius:10px;
 
         }
 
-        window.addEventListener("resize", showMonth);
 
-        function MobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors) {
+        function mobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors) {
             let thead = document.querySelector(".table-container table thead tr");
             let containerTable = document.querySelector(".table-container");
             let table = document.querySelector(".table-container  table");
@@ -1638,6 +1637,8 @@ Delete
         // ===========================
 
 
+        window.addEventListener("resize", showMonth);
+        
         function encryptedJSON() {
 
 
