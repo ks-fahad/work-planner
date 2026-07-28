@@ -18,7 +18,7 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: #f1f3f5;
             margin: 0;
             padding: 20px;
@@ -128,7 +128,7 @@
             overflow-x: auto;
         }
 
-        table {
+        .table-container table {
             width: 100%;
             border-collapse: separate;
             min-width: 900px;
@@ -181,7 +181,11 @@
         .small-btn {
             width: auto;
             padding: 6px 10px;
-            margin: 2px;
+            margin: 1px;
+            box-shadow:
+                0 3px 8px rgba(15, 23, 42, 0.18),
+                0 10px 24px rgba(15, 23, 42, 0.12);
+
         }
 
         .btn-danger {
@@ -260,6 +264,22 @@
 
         .wpillus-grid .fade {
             opacity: .4;
+        }
+
+        .today-row {
+            border: 0;
+            border-radius: 8px;
+            background: #f0fdf4;
+            border-left: none !important;
+            border-bottom: none !important;
+
+        }
+
+        .today-row td {
+
+            border: 0;
+            border-left: 2px solid #16a34a !important;
+            border-bottom: 2px solid #16a34a !important;
         }
     </style>
 
@@ -1216,110 +1236,10 @@
                         decrypt(r.totalMinutes)
                     );
 
-
-
-                    let row = body.insertRow();
-
-                    let cellIndex = row.insertCell(0);
-
-                    let d_now = new Date(date);
-
-                    let dateCell= row.insertCell(1);
-
-                    dateCell.innerHTML = d_now.toLocaleDateString("en-GB", {
-                        day: "2-digit"
-                    }) +
-                        ", " +
-                        d_now.toLocaleDateString("en-GB", {
-                            weekday: "long"
-                        });
-
-
-                    let startWork = row.insertCell(2);
-                    let finishWork = row.insertCell(3);
-                    startWork.innerHTML = start;
-                    finishWork.innerHTML = finish;
-                    startWork.style.fontWeight = "bold";
-                    finishWork.style.fontWeight = "bold";
-
-
-                    row.insertCell(4).innerHTML = bs || "⚪";
-
-
-                    row.insertCell(5).innerHTML = be || "⚪";
-
-
-                    let breakTotalInfo = row.insertCell(6);
-
-                    if (breakType === "Auto") {
-                        breakTotalInfo.innerHTML = "30 m (Auto)";
-                    }
-                    else if (breakType === "Have") {
-                        breakTotalInfo.innerHTML = formatMinutes(breakMinutes);
-                    }
-                    else {
-                        breakTotalInfo.innerHTML = "⚪";
-                    }
-
-                    let totalWorkperDay = row.insertCell(7);
-                    totalWorkperDay.innerHTML = formatMinutes(worked);
-                    totalWorkperDay.style.fontWeight = "bold";
-
-
-
-
-
-                    let action = row.insertCell(8);
-
-
-
-                    action.innerHTML =
-
-                        `
-<button class="small-btn btn-edit"
-onclick="editRecord(${index})">
-Edit
-</button>
-
-<button class="small-btn btn-danger"
-onclick="deleteRecord(${index})">
-Delete
-</button>
-
-`;
-                    row.style.backgroundColor =
-                        weekColors[weekIndex % weekColors.length];
-
-                    // Get today's date in YYYY-MM-DD format
-                    let today = new Date().toLocaleDateString("en-CA");
-
-                    // Highlight today's row
-                    if (date === today) {
-                        cellIndex.innerHTML = "✅";
-                        dateCell.innerHTML = "Today";
-
-                        // row.style.backgroundColor = "#30525C";
-                        // row.style.color = "white";
-                        row.style.fontWeight = "bold";
-                        for (let i = 0; i < row.cells.length; i++) {
-                            row.cells[i].style.border = "1px solid #16a34a";
-                            row.cells[i].style.borderLeft = "5px solid #16a34a";
-                             row.cells[i].style.borderBottom = "5px solid #16a34a";
-                        }
-                        
-
-                    }
-                    else {
-                        cellIndex.innerHTML = count;
-                    }
-
-
-
+                    MobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors);
 
 
                     totalHours += worked;
-
-
                     totalBreak += breakMinutes;
 
 
@@ -1492,10 +1412,227 @@ border-radius:10px;
 
         }
 
+        window.addEventListener("resize", showMonth)
+
+        function MobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors) {
+            let thead = document.querySelector(".table-container table thead tr");
+            let containerTable = document.querySelector(".table-container");
+            let table = document.querySelector(".table-container  table");
+
+            // Get today's date in YYYY-MM-DD format
+            let today = new Date().toLocaleDateString("en-CA");
+            let row = body.insertRow();
+
+            if (window.innerWidth < 745) {
+                if (thead.style.display !== "none") {
+                    containerTable.style.overflowX = "hidden";
+                    thead.style.display = "none";
+                    table.style.minWidth = "auto";
+                    table.style.borderSpacing = "14px";
+                }
+
+                let cell = row.insertCell(0);
+
+                cell.colSpan = 9;
+                cell.style.overflow = "visible";
+                cell.style.position = "relative";
+                cell.style.padding = "0";
+
+                cell.innerHTML = `
+    <div style="
+        position:absolute;
+        top:-10px;
+        left:0;
+        font-size: 12px;
+        color:black;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        z-index:10;
+    ">
+            <span style="
+        border-radius: 25px;
+        background:white;
+        padding: 2px 10px;
+        box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.12),
+    0 10px 25px rgba(15, 23, 42, 0.08);
+        color: ${weekColors[weekIndex % weekColors.length]};
+        border: 1px solid ${weekColors[weekIndex % weekColors.length]};
+        "> ${date === today ? "✅" : count} </span>
+              <span style="
+        border-radius: 25px;
+        background:white;
+        padding: 2px 10px;
+       box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.12),
+    0 10px 25px rgba(15, 23, 42, 0.08);
+     border: 1px solid ${weekColors[weekIndex % weekColors.length]};
+        ">  ${date === today ? "Today" : dateFormat(date)} </span>
+        
+    </div>
+
+<div style="padding: 5px 8px 2px 8px; font-size: 15px">
+
+    <div style="display:flex; justify-content:space-between; mergin:0; padding:0 0 3px 0">
+        <span></span>
+        <span>${ActionButtons(index, "custom")}</span>
+    </div>
+
+    <div style="display:flex; justify-content:space-between;">
+        <span style="font-weight:bold;">Work Hours</span>
+        <span style="font-weight:bold;">${start} - ${finish}</span>
+    </div>
+
+    ${(bs && be) ? `
+        <div style="display:flex; justify-content:space-between;">
+            <span style="font-style: italic;">Break</span>
+            <span style="font-style: italic;">${bs} - ${be} [${formatMinutes(breakMinutes)}]</span>
+        </div>
+    ` : (breakType === "Auto")
+                        ? `
+        <div style="display:flex; justify-content:space-between;">
+            <span style="font-style: italic;">Break</span>
+            <span style="font-style: italic;">⚙️ 30 m</span>
+        </div>
+    `: ""}
+
+    
+
+    <div style="display:flex; justify-content:space-between;">
+        <span style="font-weight:bold;">Total</span>
+        <span style="font-weight:bold;">${formatMinutes(worked)}</span>
+    </div>
+
+</div>
+     
+        <hr style="
+    border:0;
+    border-top: 1px dashed #aaa;
+    margin: 8px 8px;
+">
+`;
+
+            } else {
+                if (thead.style.display === "none") {
+                    thead.style.display = "";
+                    containerTable.style.overflowX = "auto";
+                    table.style.minWidth = "900px";
+                    table.style.borderSpacing = "8px";
+                }
+
+                let cellIndex = row.insertCell(0);
+
+                let d_now = new Date(date);
+
+                let dateCell = row.insertCell(1);
+
+                dateCell.innerHTML = dateFormat(date);
+
+
+                let startWork = row.insertCell(2);
+                let finishWork = row.insertCell(3);
+                startWork.innerHTML = start;
+                finishWork.innerHTML = finish;
+                startWork.style.fontWeight = "bold";
+                finishWork.style.fontWeight = "bold";
+
+
+                row.insertCell(4).innerHTML = bs || "⚪";
+
+
+                row.insertCell(5).innerHTML = be || "⚪";
+
+
+                let breakTotalInfo = row.insertCell(6);
+
+                if (breakType === "Auto") {
+                    breakTotalInfo.innerHTML = "30 m";
+                }
+                else if (breakType === "Have") {
+                    breakTotalInfo.innerHTML = formatMinutes(breakMinutes);
+                }
+                else {
+                    breakTotalInfo.innerHTML = "⚪";
+                }
+
+                let totalWorkperDay = row.insertCell(7);
+                totalWorkperDay.innerHTML = formatMinutes(worked);
+                totalWorkperDay.style.fontWeight = "bold";
 
 
 
 
+
+                let action = row.insertCell(8);
+
+
+
+                action.innerHTML = ActionButtons(index, "auto");
+
+                // Highlight today's row
+                if (date === today) {
+                    cellIndex.innerHTML = "✅";
+                    dateCell.innerHTML = "Today";
+
+                } else {
+                    cellIndex.innerHTML = count;
+                }
+            }
+
+            if (date === today) {
+
+                row.style.fontWeight = "bold";
+
+                row.classList.add("today-row");
+
+            }
+
+
+            row.style.backgroundColor =
+                weekColors[weekIndex % weekColors.length];
+        }
+
+        function ActionButtons(index, size) {
+            if (size === "auto") {
+                return `<button class="small-btn btn-edit"
+onclick="editRecord(${index})">
+Edit
+</button>
+
+<button class="small-btn btn-danger"
+onclick="deleteRecord(${index})">
+Delete
+</button>`}
+            else {
+                return `<button class="small-btn btn-edit"
+onclick="editRecord(${index})" style="
+font-size: 13px;
+padding: 3px 8px;
+">
+Edit
+</button>
+
+<button class="small-btn btn-danger"
+onclick="deleteRecord(${index})" style="
+font-size: 13px;
+padding: 3px 8px;
+">
+Delete
+</button>`
+            }
+        }
+
+        function dateFormat(date) {
+            let d = new Date(date);
+            return d.toLocaleDateString("en-GB", {
+                day: "2-digit"
+            }) +
+                ", " +
+                d.toLocaleDateString("en-GB", {
+                    weekday: "long"
+                });
+        }
         // ===========================
         // PREPARE ENCRYPTED JSON
         // ===========================
@@ -2229,7 +2366,7 @@ border-radius:10px;
 
 
 
-            document.getElementById("salaryResult").innerHTML =`
+            document.getElementById("salaryResult").innerHTML = `
 <div style="
     font-family:Arial,sans-serif;
     background:#ffffff;
