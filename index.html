@@ -800,11 +800,13 @@
             let date = document.getElementById("date").value;
             let start = document.getElementById("start").value;
             let finish = document.getElementById("finish").value;
+            let hasBreakTime = document.getElementById("hasBreak").value;
+            let startBreak = document.getElementById("breakStart").value;
+            let endBreak = document.getElementById("breakEnd").value
 
-            if (!date || !start || !finish) {
-
+            if (!date || !start || !finish || (hasBreakTime === "yes" && (!startBreak || !endBreak)) ) {
                 showMessage(
-                    "Date, start and finish are required",
+                    "Date, start and finish times are required [required break times if it is 'YES']",
                     "error"
                 );
 
@@ -824,6 +826,10 @@
                 return;
             }
 
+           if(hasBreakTime==="no") {
+                startBreak = "";
+                endBreak = "";
+            }
 
             let record = {
 
@@ -833,13 +839,9 @@
 
                 finish: encrypt(finish),
 
-                breakStart: encrypt(
-                    document.getElementById("breakStart").value
-                ),
+                breakStart: encrypt(startBreak),
 
-                breakEnd: encrypt(
-                    document.getElementById("breakEnd").value
-                ),
+                breakEnd: encrypt(endBreak),
 
                 breakMinutes: encrypt(
                     result.breakMinutes
@@ -1021,28 +1023,14 @@
 
 
             if (bs && be) {
-
-
                 document.getElementById("hasBreak").value = "yes";
-
-
                 toggleBreak();
-
-
                 document.getElementById("breakStart").value = bs;
-
-
                 document.getElementById("breakEnd").value = be;
-
-
 
             }
             else {
-
-
                 document.getElementById("hasBreak").value = "no";
-
-
                 toggleBreak();
 
 
@@ -1091,7 +1079,6 @@
             loadMonths();
 
             showMonth();
-
 
             showMessage(
                 "Deleted successfully",
@@ -1424,9 +1411,10 @@ border-radius:10px;
 
             if (window.innerWidth < 745) {
                 if (thead.style.display !== "none") {
-                    containerTable.style.overflowX = "hidden";
+                    containerTable.style.webkitOverflowScrolling = "touch";
                     thead.style.display = "none";
-                    table.style.minWidth = "auto";
+                    table.style.width = "100%";
+                    table.style.minWidth = "100%";
                     table.style.borderSpacing = "14px";
                 }
 
@@ -1439,44 +1427,55 @@ border-radius:10px;
 
                 cell.innerHTML = `
     <div style="
-        position:absolute;
-        top:-10px;
-        left:0;
-        font-size: 12px;
-        color:black;
+        position:relative;
+        margin-top:-10px;
+        margin-bottom:1px;
         display:flex;
+        justify-content:space-between;
         align-items:center;
-        justify-content:center;
+        font-size:12px;
+        color:black;
         z-index:10;
     ">
+
+        <!-- Left Side -->
+        <div style="display:flex; gap:2px; align-items:center;">
             <span style="
-        border-radius: 25px;
-        background:white;
-        padding: 2px 10px;
-        box-shadow:
-    0 2px 8px rgba(15, 23, 42, 0.12),
-    0 10px 25px rgba(15, 23, 42, 0.08);
-        color: ${weekColors[weekIndex % weekColors.length]};
-        border: 1px solid ${weekColors[weekIndex % weekColors.length]};
-        "> ${date === today ? "✅" : count} </span>
-              <span style="
-        border-radius: 25px;
-        background:white;
-        padding: 2px 10px;
-       box-shadow:
-    0 2px 8px rgba(15, 23, 42, 0.12),
-    0 10px 25px rgba(15, 23, 42, 0.08);
-     border: 1px solid ${weekColors[weekIndex % weekColors.length]};
-        ">  ${date === today ? "Today" : dateFormat(date)} </span>
-        
+                border-radius:25px;
+                background: ${weekColors[weekIndex % weekColors.length]};
+                padding:2px 10px;
+                box-shadow:
+                    0 2px 8px rgba(15,23,42,.12),
+                    0 10px 25px rgba(15,23,42,.08);
+                color: white;
+                border:1px solid white;
+                font-weight: bold;
+            ">
+                ${date === today ? "✅" : count}
+            </span>
+
+            <span style="
+                border-radius:25px;
+                background:white;
+                padding:2px 10px;
+                box-shadow:
+                    0 2px 8px rgba(15,23,42,.12),
+                    0 10px 25px rgba(15,23,42,.08);
+                border:1px solid ${weekColors[weekIndex % weekColors.length]};
+            ">
+                ${date === today ? "Today" : dateFormat(date)}
+            </span>
+        </div>
+
+        <!-- Right Side -->
+        <div style="display:flex; align-items:center; margin:0; padding:0; gap:2px;">
+            <span>
+                ${ActionButtons(index, "custom")}
+            </span>
+        </div>
     </div>
 
 <div style="padding: 5px 8px 2px 8px; font-size: 15px">
-
-    <div style="display:flex; justify-content:space-between; mergin:0; padding:0 0 3px 0">
-        <span></span>
-        <span>${ActionButtons(index, "custom")}</span>
-    </div>
 
     <div style="display:flex; justify-content:space-between;">
         <span style="font-weight:bold;">Work Hours</span>
@@ -1515,7 +1514,6 @@ border-radius:10px;
             } else {
                 if (thead.style.display === "none") {
                     thead.style.display = "";
-                    containerTable.style.overflowX = "auto";
                     table.style.minWidth = "900px";
                     table.style.borderSpacing = "8px";
                 }
@@ -1606,15 +1604,17 @@ Delete
             else {
                 return `<button class="small-btn btn-edit"
 onclick="editRecord(${index})" style="
-font-size: 13px;
+font-size: 12px;
 padding: 3px 8px;
+border-radius: 25px;
 ">
 Edit
 </button>
 
 <button class="small-btn btn-danger"
 onclick="deleteRecord(${index})" style="
-font-size: 13px;
+font-size: 12px;
+border-radius: 25px;
 padding: 3px 8px;
 ">
 Delete
@@ -1637,8 +1637,16 @@ Delete
         // ===========================
 
 
-        window.addEventListener("resize", showMonth);
-        
+        let resizeTimer;
+
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimer);
+
+            resizeTimer = setTimeout(() => {
+                showMonth();
+            }, 200);
+        });
+
         function encryptedJSON() {
 
 
