@@ -861,14 +861,34 @@
 
             };
 
-            const duplicateDateRecord = records.some(r => decrypt(r.date) === date);
+            const duplicateDateRecord = records.find(r => decrypt(r.date) === date);
 
             if (duplicateDateRecord) {
+                const previousStart = decrypt(duplicateDateRecord.start);
+                const previousFinish = decrypt(duplicateDateRecord.finish);
+                const previousBreakStart = decrypt(duplicateDateRecord.breakStart);
+                const previousBreakEnd = decrypt(duplicateDateRecord.breakEnd);
+                const previousBreakMinutes = Number(decrypt(duplicateDateRecord.breakMinutes));
+                const previousBreakText = previousBreakStart && previousBreakEnd
+                    ? previousBreakStart + " - " + previousBreakEnd + " [" + formatMinutes(previousBreakMinutes) + "]"
+                    : "No break";
+
+                const newBreakText = startBreak && endBreak
+                    ? startBreak + " - " + endBreak + " [" + formatMinutes(result.breakMinutes) + "]"
+                    : "No break";
+
                 const proceed = window.confirm(
-                    "Update Confirmation\n\n" +
+                    "Replace Confirmation\n\n" +
                     "Date: " + date + "\n\n" +
-                    "This date already has an entry.\n" +
-                    "Do you want to replace it?"
+                    "Existing Entry:\n" +
+                    "Start: " + previousStart + "\n" +
+                    "Finish: " + previousFinish + "\n" +
+                    "Break: " + previousBreakText + "\n\n" +
+                    "New Entry:\n" +
+                    "Start: " + start + "\n" +
+                    "Finish: " + finish + "\n" +
+                    "Break: " + newBreakText + "\n\n" +
+                    "Do you want to replace the existing record?"
                 );
 
                 if (!proceed) {
@@ -1005,10 +1025,12 @@
         function editRecord(index) {
 
 
-            document.getElementById("app").scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            if (window.innerWidth > 745) {
+                document.getElementById("app").scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
 
 
             let r = records[index];
@@ -2326,14 +2348,16 @@ Delete
 
             block.style.display = "block";
 
-            requestAnimationFrame(() => {
-                const targetY = Math.max(0, block.getBoundingClientRect().top + window.scrollY - 90);
+            if (window.innerWidth > 745) {
+                requestAnimationFrame(() => {
+                    const targetY = Math.max(0, block.getBoundingClientRect().top + window.scrollY - 90);
 
-                window.scrollTo({
-                    top: targetY,
-                    behavior: "smooth"
+                    window.scrollTo({
+                        top: targetY,
+                        behavior: "smooth"
+                    });
                 });
-            });
+            }
 
         }
 
