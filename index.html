@@ -281,6 +281,10 @@
             border-left: 2px solid #16a34a !important;
             border-bottom: 2px solid #16a34a !important;
         }
+
+        #salaryBlock {
+            scroll-margin-top: 90px;
+        }
     </style>
 
 
@@ -414,12 +418,12 @@
 
 
 
-                <button onclick="saveRecord()" id="saveButton">
+                <button type="button" onclick="saveRecord()" id="saveButton">
                     Add Record
                 </button>
 
 
-                <button onclick="clearForm()" class="secondary">
+                <button type="button" onclick="clearForm()" class="secondary">
                     Clear
                 </button>
 
@@ -857,14 +861,16 @@
 
             };
 
-            if (records.find(r => decrypt(r.date) === date)) {
+            const duplicateDateRecord = records.some(r => decrypt(r.date) === date);
+
+            if (duplicateDateRecord) {
                 const proceed = window.confirm(
                     "Update Confirmation\n\n" +
                     "Date: " + date + "\n\n" +
-                    "An entry already exists for this date.\n" +
-                    "Updating will replace the existing entry.\n\n" +
-                    "Do you want to continue?"
+                    "This date already has an entry.\n" +
+                    "Do you want to replace it?"
                 );
+
                 if (!proceed) {
                     return;
                 }
@@ -886,6 +892,23 @@
             // Reset edit mode
             editIndex = -1;
 
+            const formInputs = [
+                document.getElementById("date"),
+                document.getElementById("start"),
+                document.getElementById("finish"),
+                document.getElementById("breakStart"),
+                document.getElementById("breakEnd"),
+                document.getElementById("hasBreak")
+            ];
+
+            formInputs.forEach(input => {
+                if (input) {
+                    input.disabled = false;
+                    input.removeAttribute("readonly");
+                    input.style.pointerEvents = "auto";
+                    input.style.opacity = "1";
+                }
+            });
 
             clearForm();
 
@@ -997,22 +1020,32 @@
 
 
 
-            document.getElementById(
-                "saveButton"
-            ).innerHTML = "Update Record";
+            const saveButton = document.getElementById("saveButton");
+            const dateInput = document.getElementById("date");
+            const startInput = document.getElementById("start");
+            const finishInput = document.getElementById("finish");
+            const breakStartInput = document.getElementById("breakStart");
+            const breakEndInput = document.getElementById("breakEnd");
+            const hasBreakSelect = document.getElementById("hasBreak");
+
+            saveButton.innerHTML = "Update Record";
+
+            [dateInput, startInput, finishInput, breakStartInput, breakEndInput, hasBreakSelect].forEach(input => {
+                if (input) {
+                    input.disabled = false;
+                    input.removeAttribute("readonly");
+                    input.style.pointerEvents = "auto";
+                    input.style.opacity = "1";
+                }
+            });
 
 
 
-            document.getElementById("date").value =
-                decrypt(r.date);
+            dateInput.value = decrypt(r.date);
 
+            startInput.value = decrypt(r.start);
 
-            document.getElementById("start").value =
-                decrypt(r.start);
-
-
-            document.getElementById("finish").value =
-                decrypt(r.finish);
+            finishInput.value = decrypt(r.finish);
 
 
 
@@ -1023,14 +1056,14 @@
 
 
             if (bs && be) {
-                document.getElementById("hasBreak").value = "yes";
+                hasBreakSelect.value = "yes";
                 toggleBreak();
-                document.getElementById("breakStart").value = bs;
-                document.getElementById("breakEnd").value = be;
+                breakStartInput.value = bs;
+                breakEndInput.value = be;
 
             }
             else {
-                document.getElementById("hasBreak").value = "no";
+                hasBreakSelect.value = "no";
                 toggleBreak();
 
 
@@ -1447,7 +1480,7 @@ border-radius:10px;
                 box-shadow:
                     0 2px 8px rgba(15,23,42,.12),
                     0 10px 25px rgba(15,23,42,.08);
-                color: white;
+                color: #919191;
                 border:1px solid white;
                 font-weight: bold;
             ">
@@ -1916,27 +1949,46 @@ Delete
 
             editIndex = -1;
 
+            const saveButton = document.getElementById("saveButton");
+            const dateInput = document.getElementById("date");
+            const startInput = document.getElementById("start");
+            const finishInput = document.getElementById("finish");
+            const breakStartInput = document.getElementById("breakStart");
+            const breakEndInput = document.getElementById("breakEnd");
+            const hasBreakSelect = document.getElementById("hasBreak");
+            const breakArea = document.getElementById("breakArea");
 
-            document.getElementById(
-                "saveButton"
-            ).innerHTML = "Add Record";
+            saveButton.innerHTML = "Add Record";
 
+            [dateInput, startInput, finishInput, breakStartInput, breakEndInput, hasBreakSelect].forEach(input => {
+                if (input) {
+                    input.disabled = false;
+                    input.removeAttribute("readonly");
+                    input.style.pointerEvents = "auto";
+                    input.style.opacity = "1";
+                }
+            });
 
-            document.getElementById("date").value = "";
+            if (breakArea) {
+                breakArea.style.display = "none";
+            }
 
-            document.getElementById("start").value = "";
+            dateInput.value = "";
+            startInput.value = "";
+            finishInput.value = "";
+            breakStartInput.value = "";
+            breakEndInput.value = "";
+            hasBreakSelect.value = "no";
 
-            document.getElementById("finish").value = "";
+            if (breakArea) {
+                breakArea.classList.add("hidden");
+            }
 
-            document.getElementById("breakStart").value = "";
-
-            document.getElementById("breakEnd").value = "";
-
-            document.getElementById("hasBreak").value = "no";
-
-
-            toggleBreak();
-
+            setTimeout(() => {
+                if (dateInput && document.contains(dateInput)) {
+                    dateInput.focus();
+                }
+            }, 0);
 
             showMessage(
                 "Form cleared",
@@ -2268,11 +2320,19 @@ Delete
 
             let block = document.getElementById("salaryBlock");
 
+            if (!block) {
+                return;
+            }
+
             block.style.display = "block";
 
-            block.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
+            requestAnimationFrame(() => {
+                const targetY = Math.max(0, block.getBoundingClientRect().top + window.scrollY - 90);
+
+                window.scrollTo({
+                    top: targetY,
+                    behavior: "smooth"
+                });
             });
 
         }
@@ -2322,7 +2382,7 @@ Delete
                 Number(document.getElementById("extraPercent").value || 100);
 
 
-            if (!contractHours || !salaryPerHour || !taxPercent) {
+            if (!Number.isFinite(contractHours) || !Number.isFinite(salaryPerHour) || !Number.isFinite(taxPercent) || contractHours <= 0 || salaryPerHour <= 0) {
 
                 document.getElementById("salaryResult").innerHTML = `
         <div style="
@@ -2366,7 +2426,7 @@ Delete
                 normalPay + extraPay;
 
             let tax =
-                normalPay *
+                grossSalary *
                 (taxPercent / 100);
 
 
