@@ -25,11 +25,19 @@ h2 {
 input,
 select,
 button {
+    -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     padding: 10px;
     margin-top: 6px;
     margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f9fafb;
     box-sizing: border-box;
+    box-shadow:
+        0 2px 6px rgba(15, 23, 42, 0.06),
+        0 8px 20px rgba(15, 23, 42, 0.04);
 }
 
 
@@ -37,7 +45,7 @@ button {
     background: #0066cc;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
 }
 
@@ -91,13 +99,6 @@ button:hover {
 
 .time-field {
     flex: 1;
-}
-
-.time-field input, .card select, .card input{
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
 }
 
 
@@ -265,6 +266,23 @@ td:hover {
     border-bottom: 2px solid #16a34a !important;
 }
 
-#salaryBlock {
-    scroll-margin-top: 90px;
+.button-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.button-row button {
+    flex: 1 1 150px;
+    min-width: 0;
+    max-width: 100%;
+
+    white-space: normal;
+    /* allow text wrapping */
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    text-align: center;
+    box-sizing: border-box;
 }

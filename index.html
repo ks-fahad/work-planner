@@ -153,17 +153,15 @@
 
 
 
+                <div class="button-row"">
+                    <button type="button" onclick="saveRecord()" id="saveButton">
+                        Add Record
+                    </button>
 
-                <button type="button" onclick="saveRecord()" id="saveButton">
-                    Add Record
-                </button>
-
-
-                <button type="button" onclick="clearForm()" class="secondary">
-                    Clear
-                </button>
-
-
+                    <button type="button" onclick="clearForm()" class="secondary">
+                        Clear
+                    </button>
+                </div>
 
             </div>
 
@@ -266,7 +264,7 @@
                         style="width:100%;padding:12px;border:none;border-radius:8px;background:#2563eb;color:white;cursor:pointer;">Calculate
                         Salary</button>
                     <div id="salaryBlock"
-                        style="max-height:0;overflow:hidden;opacity:0;transform:translateY(-10px);transition:max-height .4s ease, opacity .3s ease, transform .3s ease;margin-top:20px;padding:20px;background:#f8fafc;border-radius:15px;border:1px solid #e5e7eb;">
+                        style="display:none;margin-top:20px;padding:20px;background:#f8fafc;border-radius:15px;border:1px solid #e5e7eb;">
                         <h3 style="margin-top:0;">💰 Salary Calculator</h3>
                         <div style="display:grid; gap:12px;">
                             <span style="font-size:13px; color:#6b7280;">Enter your contract details below to calculate
@@ -291,7 +289,8 @@
                                 style="padding:12px;border:none;border-radius:10px;background:#16a34a;color:white;font-size:16px;cursor:pointer;">Calculate</button>
                         </div>
                         <div id="salaryResult"
-                            style="margin-top:15px;padding:15px;background:white;border-radius:10px;"></div>
+                            style="margin-top:15px;padding:15px;background:white;border-radius:10px;">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -304,18 +303,19 @@
             </div>
             <div style="margin-top: 10px;"></div>
 
-            <button onclick="saveToGitHub()">
-                Save To Database
-            </button>
+            <div class="button-row">
+                <button onclick="saveToGitHub()">
+                    Save To Database
+                </button>
 
+                <button onclick="retryGitHubSave()" class="secondary">
+                    Retry Save
+                </button>
 
-            <button onclick="retryGitHubSave()" class="secondary">
-                Retry Save
-            </button>
-
-            <button onclick="location.reload();" class="danger">
-                Log Out
-            </button>
+                <button onclick="location.reload();" class="danger">
+                    Log Out
+                </button>
+            </div>
 
 
 
