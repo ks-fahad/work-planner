@@ -7,46 +7,30 @@ function showSalaryBlock() {
     }
 
 
-    if (block.classList.contains("open")) {
+    if (block.style.display === "none") {
 
-        block.classList.remove("open");
+        block.style.display = "block";
 
-        block.style.maxHeight = "0px";
-        block.style.opacity = "0";
-        block.style.transform = "translateY(-10px)";
-
-        button.textContent = "Calculate Salary";
+        button.textContent = "Hide Salary Details";
+        document.getElementById("salaryBlock").scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest"
+        });
 
 
     } else {
 
-        block.classList.add("open");
+        block.style.display = "none";
 
-        block.style.maxHeight = block.scrollHeight + "px";
-        block.style.opacity = "1";
-        block.style.transform = "translateY(0)";
-
-        button.textContent = "Hide Salary Details";
+        button.textContent = "Calculate Salary";
 
 
-        if (window.innerWidth > 745) {
-
-            requestAnimationFrame(() => {
-
-                const targetY =
-                    block.getBoundingClientRect().top +
-                    window.scrollY -
-                    90;
-
-
-                window.scrollTo({
-                    top: targetY,
-                    behavior: "smooth"
-                });
-
-            });
-
-        }
+        document.getElementById("summary").scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+            inline: "nearest"
+        });
 
     }
 }
