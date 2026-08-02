@@ -47,7 +47,7 @@
         <!-- LOGIN -->
 
 
-        <div id="loginBox" class="card">
+        <div id="loginBox" class="card" style="margin-bottom: 30px;">
 
 
             <h2>Open Database</h2>
@@ -60,7 +60,7 @@
             <input type="password" id="passwordInput" placeholder="Password">
 
 
-            <button onclick="login()">
+            <button onclick="login()" style="margin-top: 12px; margin-bottom: 10px;">
                 Open
             </button>
 
@@ -106,12 +106,12 @@
                 <div class="time-row">
                     <div class="time-field">
                         <label>Start Time</label>
-                        <input type="time" id="start" placeholder="When do you start?">
+                        <input type="time" id="start" style="min-height: 40px;">
                     </div>
 
                     <div class="time-field">
                         <label>Finish Time</label>
-                        <input type="time" id="finish" placeholder="When do you finish?">
+                        <input type="time" id="finish" style="min-height: 40px;">
                     </div>
                 </div>
 
@@ -138,12 +138,12 @@
                     <div class="time-row">
                         <div class="time-field">
                             <label> Break Start</label>
-                            <input type="time" id="breakStart" placeholder="When does your break start?">
+                            <input type="time" id="breakStart" style="min-height: 40px;">
                         </div>
 
                         <div class="time-field">
                             <label>Break End</label>
-                            <input type="time" id="breakEnd" placeholder="When does your break end?">
+                            <input type="time" id="breakEnd" style="min-height: 40px;">
                         </div>
                     </div>
 
@@ -153,8 +153,8 @@
 
 
 
-                <div class="button-row"">
-                    <button type="button" onclick="saveRecord()" id="saveButton">
+                <div class="button-row">
+                    <button type=" button" onclick="saveRecord()" id="saveButton">
                         Add Record
                     </button>
 
@@ -162,6 +162,8 @@
                         Clear
                     </button>
                 </div>
+
+
 
             </div>
 
@@ -303,9 +305,10 @@
             </div>
             <div style="margin-top: 10px;"></div>
 
-            <div class="button-row">
-                <button onclick="saveToGitHub()">
-                    Save To Database
+            <div class="button-row" style="margin-bottom: 30px;">
+                <button onclick="saveToGitHub()" style="background: linear-gradient(135deg, #047857, #10B981);"
+                    onmouseover="this.style.background='#F97316'" onmouseout="this.style.background='linear-gradient(135deg, #047857, #10B981)'">
+                    Confirm Save
                 </button>
 
                 <button onclick="retryGitHubSave()" class="secondary">
@@ -316,12 +319,57 @@
                     Log Out
                 </button>
             </div>
-
-
-
         </div>
 
+        <div style="
+    text-align:center;
+    border-radius:10px;
+    color:#1F2937;
+    max-width:auto;
+    margin:auto;
+    padding:30px;
+    background:#FFFBEB;
+    
+">
 
+            <h1 style="
+        font-size:25px;
+        margin-bottom:8px;
+        letter-spacing:1px;
+    ">
+                Work Planner - Your Personal Work Hours Tracker
+            </h1>
+
+            <h3 style="
+        font-size:20px;
+        font-weight:300;
+        opacity:0.9;
+        margin-bottom:20px;
+    ">
+                Developed by <strong><i>@ks-fahad</i></strong>
+            </h3>
+
+            <p>
+                A simple and efficient application designed to help users track and
+                manage their working hours easily. Track daily working hours, calculate monthly total hours, monitor
+                break
+                time, record overtime hours, and get an approximate salary calculation
+                based on work records. The app provides a clean and user-friendly experience, helping users
+                organize their work details and maintain accurate time records. All data is securely stored in the
+                database, allowing users to access
+                their work history anytime and continue tracking without losing
+                previous information.
+            </p>
+
+            <p style="
+        font-weight:bold;
+        margin-top:10px;
+    ">
+                A complete solution for professional work tracking, monthly calculations,
+                and better time management.
+            </p>
+
+        </div>
 
     </div>
 

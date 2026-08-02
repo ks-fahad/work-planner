@@ -30,7 +30,6 @@ button {
     width: 100%;
     padding: 10px;
     margin-top: 6px;
-    margin-bottom: 12px;
     border-radius: 8px;
     border: 1px solid #ccc;
     background: #f9fafb;
@@ -194,7 +193,7 @@ td:hover {
 /* top bar */
 
 .wpillus-header {
-    height: 60px;
+    height: 40px;
     border-radius: 20px;
     background: linear-gradient(135deg, #047857, #10B981);
     display: flex;
@@ -233,10 +232,11 @@ td:hover {
 
 
 .wpillus-grid i {
-    height: 45px;
+    height: 40px;
     border-radius: 16px;
     background: #D1FAE5;
     display: block;
+    padding: 2px;
 }
 
 
@@ -270,7 +270,6 @@ td:hover {
     display: flex;
     gap: 10px;
     margin-top: 10px;
-    flex-wrap: wrap;
 }
 
 .button-row button {
@@ -285,4 +284,23 @@ td:hover {
 
     text-align: center;
     box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+
+    .wpillus-grid {
+        gap: 5px;
+    }
+
+    .wpillus-grid i {
+        height: 30px;
+        border-radius: 8px;
+    }
+    .wpillus-header{
+        gap: 6px;
+    }
+    .wpillus-header div {
+        width: 60%;
+        height: 14px;
+    }
 }
