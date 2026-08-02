@@ -357,38 +357,10 @@ function showMonth() {
         totalRow.cells[0].innerHTML = "Weekly Total Hours: " + formatMinutes(weekTotal);
     }
 
-    document.getElementById("summary").innerHTML = `
-<div style="font-family:Arial,sans-serif;">
-<h2 style="margin:0;">📊 Monthly Summary Report</h2>
-<hr style="border:none; border-top:1px solid #ddd; margin:12px 0 18px;">
-<div style="margin-bottom:18px;">
-    <div style="font-size:13px; color:#6b7280;">📅 Working Days</div>
-    <div style="font-size:22px; font-weight:bold;">${count} days</div>
-</div>
-<div style="margin-bottom:18px;">
-    <div style="font-size:13px; color:#6b7280;">⏰ Total Work Hours</div>
-    <div style="font-size:22px; font-weight:bold;">${formatMinutes(totalHours)}</div>
-</div>
-<div style="margin-bottom:18px;">
-    <div style="font-size:13px; color:#6b7280;">☕ Total Break Duration</div>
-    <div style="font-size:22px; font-weight:bold;">${formatMinutes(totalBreak)}</div>
-</div>
-<button onclick="showSalaryBlock()" style="width:100%;padding:12px;border:none;border-radius:8px;background:#2563eb;color:white;cursor:pointer;">Calculate Salary</button>
-<div id="salaryBlock" style="display:none;margin-top:20px;padding:20px;background:#f8fafc;border-radius:15px;border:1px solid #e5e7eb;">
-    <h3 style="margin-top:0;">💰 Salary Calculator</h3>
-    <div style="display:grid; gap:12px;">
-        <span style="font-size:13px; color:#6b7280;">Enter your contract details below to calculate your salary for this month.<br>Total Hours Worked: <strong>${(totalHours / 60).toFixed(2)} h</strong></span>
-        <input id="contractHours" type="number" placeholder="Contract Hours" oninput="checkExtraHours(${totalHours})" style="padding:10px;border-radius:8px;border:1px solid #ccc;">
-        <input id="salaryPerHour" type="number" placeholder="Salary Per Hour" style="padding:10px;border-radius:8px;border:1px solid #ccc;">
-        <input id="taxPercent" type="number" placeholder="Tax Percentage" style="padding:10px;border-radius:8px;border:1px solid #ccc;">
-        <div id="extraBox" style="display:none;">
-            <input id="extraPercent" type="number" placeholder="Extra Hour Pay %" style="padding:10px;border-radius:8px;border:1px solid #ccc;width:100%;">
-        </div>
-        <button onclick="calculateSalary(${totalHours})" style="padding:12px;border:none;border-radius:10px;background:#16a34a;color:white;font-size:16px;cursor:pointer;">Calculate</button>
-    </div>
-    <div id="salaryResult" style="margin-top:15px;padding:15px;background:white;border-radius:10px;"></div>
-</div>
-</div>`;
+    totalHoursGlobal = totalHours;
+    totalBreakGlobal = totalBreak;
+    countGlobal = count;
+    updateMonthlySummary();
 }
 
 function mobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors) {
@@ -544,4 +516,24 @@ function clearForm() {
     }, 0);
 
     showMessage("Form cleared", "warning");
+}
+
+function updateMonthlySummary() {
+
+    document.getElementById("countDays").innerHTML =
+        `${countGlobal} days`;
+
+    document.getElementById("totalHours").innerHTML =
+        formatMinutes(totalHoursGlobal);
+
+    document.getElementById("totalBreak").innerHTML =
+        formatMinutes(totalBreakGlobal);
+        const element = document.getElementById("workedHoursDisplay");
+
+    if (element) {
+        element.innerHTML =
+            `${(totalHoursGlobal / 60).toFixed(2)} h`;
+    }
+    
+
 }

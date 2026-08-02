@@ -15,6 +15,10 @@ let GITHUB_TOKEN = " ";
 
 let config = {};
 
+let totalHoursGlobal = 0;
+let totalBreakGlobal = 0;
+let countGlobal = 0;
+
 // ===========================
 // CALENDAR Front
 // ===========================
@@ -215,7 +219,9 @@ function encryptedJSON() {
     return JSON.stringify(records, null, 2);
 }
 
+
 let resizeTimer;
+
 window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
