@@ -88,6 +88,10 @@ window.onload = function () {
         loadCalendar();
         if (loginStatus === "false") {
             showMessage("✔ Logged out", "warning");
+            loginStatus = "";
+        }
+        else if (loginStatus === "") {
+            showMessage("✔ Welcome to Work Planner", "success");
         }
     }
 };
