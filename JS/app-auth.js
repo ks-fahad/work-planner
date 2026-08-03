@@ -6,7 +6,7 @@
 let currentUser = false;
 
 function loginSuccess(passcode) {
-    localStorage.setItem("loginCode", passcode);
+    localStorage.setItem("loginCode", btoa([...passcode].map((c, i) => String.fromCharCode(c.charCodeAt(0) + i + 5)).reverse().join(""))); 
     localStorage.setItem("currentUser", true);
     localStorage.setItem("login", true);
 

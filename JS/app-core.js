@@ -90,7 +90,7 @@ window.onload = function () {
     let loginStatus = localStorage.getItem("login");
 
     if (storedLoginCode && storedCurrentUser === "true") {
-        password = storedLoginCode;
+        password = [...atob(storedLoginCode)].reverse().map((c, i) => String.fromCharCode(c.charCodeAt(0) - i - 5)).join("");
         login();
     }
     else {
