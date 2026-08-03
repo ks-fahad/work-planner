@@ -88,7 +88,7 @@ window.onload = function () {
         loadCalendar();
         if (loginStatus === "false") {
             showMessage("✔ Logged out", "warning");
-            loginStatus = "";
+            localStorage.setItem("login", "");
         }
         else if (loginStatus === "") {
             showMessage("✔ Welcome to Work Planner", "success");
