@@ -3,7 +3,7 @@
 // SAVE RECORD
 // ===========================
 
-function saveRecord() {
+async function saveRecord() {
 
     let date = document.getElementById("date").value;
     let start = document.getElementById("start").value;
@@ -11,6 +11,7 @@ function saveRecord() {
     let hasBreakTime = document.getElementById("hasBreak").value;
     let startBreak = document.getElementById("breakStart").value;
     let endBreak = document.getElementById("breakEnd").value
+    let noteInput = document.getElementById("note").value;
 
     if (!date || !start || !finish || (hasBreakTime === "yes" && (!startBreak || !endBreak))) {
         showMessage(
@@ -47,9 +48,8 @@ function saveRecord() {
 
         finish: encrypt(finish),
 
-        breakStart: encrypt(startBreak),
-
-        breakEnd: encrypt(endBreak),
+        breakStart: startBreak ? encrypt(startBreak) : "",
+        breakEnd: endBreak ? encrypt(endBreak) : "",
 
         breakMinutes: encrypt(
             result.breakMinutes
@@ -61,19 +61,86 @@ function saveRecord() {
 
         totalMinutes: encrypt(
             result.total
-        )
+        ),
+        note: noteInput ? encrypt(noteInput) : ""
 
     };
 
     const duplicateDateRecord = records.some(r => decrypt(r.date) === date);
 
     if (duplicateDateRecord) {
-        const proceed = window.confirm(
-            "Update Confirmation\n\n" +
-            "Date: " + date + "\n\n" +
-            "This date already has an entry.\n" +
-            "Do you want to replace it?"
-        );
+        const proceed = await showConfirm(`
+    <div style="
+        font-family: system-ui, sans-serif;
+        text-align: left;
+    ">
+
+        <div style="
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        ">
+            Update Confirmation
+        </div>
+
+        <hr style="
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 12px 0 18px;
+        ">
+
+        <div style="margin-bottom: 10px;">
+            <span style="color:#777;">📅 Date</span><br>
+            <strong>${date}</strong>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <span style="color:#777;">⏱ Work Hours</span><br>
+            <strong>${start} - ${finish}</strong>
+        </div>
+
+        ${hasBreakTime === "yes"
+                ? `
+            <div style="margin-bottom: 10px;">
+                <span style="color:#777;">☕ Break</span><br>
+                <strong>${startBreak} - ${endBreak}</strong>
+            </div>
+            `
+                : ""
+            }
+
+        ${noteInput
+                ? `
+            <div style="
+                margin-top: 12px;
+                padding: 10px;
+                background: #f5f5f5;
+                border-radius: 8px;
+            ">
+                <div style="color:#777; margin-bottom:5px;">
+                    📝 Note
+                </div>
+                <div>${noteInput}</div>
+            </div>
+            `
+                : ""
+            }
+
+        <div style="
+            margin-top: 18px;
+            padding: 12px;
+            background: #fff3cd;
+            border-radius: 8px;
+            color: #856404;
+            font-size: 14px;
+        ">
+            ⚠️ This date already has an existing entry.
+            <br>
+            Do you want to replace it?
+        </div>
+
+    </div>
+`);
 
         if (!proceed) {
             return;
@@ -102,7 +169,8 @@ function saveRecord() {
         document.getElementById("finish"),
         document.getElementById("breakStart"),
         document.getElementById("breakEnd"),
-        document.getElementById("hasBreak")
+        document.getElementById("hasBreak"),
+        document.getElementById("note")
     ];
 
     formInputs.forEach(input => {
@@ -186,10 +254,11 @@ function editRecord(index) {
     const breakStartInput = document.getElementById("breakStart");
     const breakEndInput = document.getElementById("breakEnd");
     const hasBreakSelect = document.getElementById("hasBreak");
+    const noteInput = document.getElementById("note");
 
     saveButton.innerHTML = "Update Record";
 
-    [dateInput, startInput, finishInput, breakStartInput, breakEndInput, hasBreakSelect].forEach(input => {
+    [dateInput, startInput, finishInput, breakStartInput, breakEndInput, hasBreakSelect, noteInput].forEach(input => {
         if (input) {
             input.disabled = false;
             input.removeAttribute("readonly");
@@ -228,7 +297,7 @@ function editRecord(index) {
 
     }
 
-
+    noteInput.value = r.note ? decrypt(r.note) : "";
 
     showMessage(
         "Editing selected record",
@@ -242,7 +311,7 @@ function editRecord(index) {
 // DELETE RECORD
 // ===========================
 
-function deleteRecord(index) {
+async function deleteRecord(index) {
     const record = records[index];
 
     if (!record) {
@@ -251,11 +320,48 @@ function deleteRecord(index) {
     }
 
     const date = decrypt(record.date);
-    const proceed = confirm(
-        "Delete Confirmation\n\n" +
-        "Date: " + date + "\n\n" +
-        "Do you want to delete this record?"
-    );
+    const proceed = await showConfirm(`
+    <div style="
+        font-family: system-ui, sans-serif;
+        text-align: left;
+    ">
+
+        <div style="
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        ">
+            Delete Confirmation
+        </div>
+
+        <hr style="
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 12px 0 18px;
+        ">
+
+        <div style="
+            margin-bottom: 15px;
+        ">
+            <span style="color:#777;">📅 Date</span><br>
+            <strong>${date}</strong>
+        </div>
+
+        <div style="
+            margin-top: 18px;
+            padding: 12px;
+            background: #f8d7da;
+            border-radius: 8px;
+            color: #842029;
+            font-size: 14px;
+        ">
+            ⚠️ This action cannot be undone.
+            <br>
+            Do you want to delete this record?
+        </div>
+
+    </div>
+`);
 
     if (!proceed) {
         return;
@@ -314,6 +420,7 @@ function showMonth() {
         let breakMinutes = Number(decrypt(r.breakMinutes));
         let breakType = decrypt(r.breakType);
         let worked = Number(decrypt(r.totalMinutes));
+        let note = r.note ? decrypt(r.note) : "";
 
         let d = new Date(date);
         let day = d.getDay();
@@ -325,7 +432,7 @@ function showMonth() {
         if (weekKey !== currentWeek) {
             if (currentWeek !== "") {
                 let totalRow = body.insertRow();
-                totalRow.insertCell(0).colSpan = 9;
+                totalRow.insertCell(0).colSpan = 10;
                 totalRow.cells[0].style.border = 'none';
                 totalRow.cells[0].style.textAlign = 'left';
                 totalRow.cells[0].style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.1)';
@@ -341,7 +448,7 @@ function showMonth() {
         weekTotal += worked;
 
         if (date.startsWith(month)) {
-            mobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors);
+            mobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, note, index, weekIndex, weekColors);
             totalHours += worked;
             totalBreak += breakMinutes;
         }
@@ -349,7 +456,7 @@ function showMonth() {
 
     if (currentWeek !== "") {
         let totalRow = body.insertRow();
-        totalRow.insertCell(0).colSpan = 9;
+        totalRow.insertCell(0).colSpan = 10;
         totalRow.cells[0].style.border = 'none';
         totalRow.cells[0].style.textAlign = 'left';
         totalRow.cells[0].style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.1)';
@@ -363,7 +470,7 @@ function showMonth() {
     updateMonthlySummary();
 }
 
-function mobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, index, weekIndex, weekColors) {
+function mobileView(body, count, date, start, finish, bs, be, breakMinutes, breakType, worked, note, index, weekIndex, weekColors) {
     let thead = document.querySelector(".table-container table thead tr");
     let containerTable = document.querySelector(".table-container");
     let table = document.querySelector(".table-container table");
@@ -380,7 +487,7 @@ function mobileView(body, count, date, start, finish, bs, be, breakMinutes, brea
         }
 
         let cell = row.insertCell(0);
-        cell.colSpan = 9;
+        cell.colSpan = 10;
         cell.style.overflow = "visible";
         cell.style.position = "relative";
         cell.style.padding = "0";
@@ -400,7 +507,8 @@ function mobileView(body, count, date, start, finish, bs, be, breakMinutes, brea
     ${(bs && be) ? `<div style="display:flex; justify-content:space-between;"><span style="font-style: italic;">Break</span><span style="font-style: italic;">${bs} - ${be} [${formatMinutes(breakMinutes)}]</span></div>` : (breakType === "Auto") ? `<div style="display:flex; justify-content:space-between;"><span style="font-style: italic;">Break</span><span style="font-style: italic;">⚙️ 30 m</span></div>` : ""}
     <div style="display:flex; justify-content:space-between;"><span style="font-weight:bold;">Total</span><span style="font-weight:bold;">${formatMinutes(worked)}</span></div>
 </div>
-<hr style="border:0;border-top: 1px dashed #aaa;margin: 8px 8px;">`;
+<hr style="border:0;border-top: 1px dashed #aaa;margin: 8px 8px 2px 8px;">
+${note ? `<div style="padding: 2px 2px; margin: 2px 8px; font-size: 10px; text-align: justify; white-space: pre-wrap;word-break: break-word;overflow-wrap: break-word;">${note}</div>` : `<div style="margin-top:8px"/>`}`
     }
     else {
         if (thead.style.display === "none") {
@@ -438,7 +546,18 @@ function mobileView(body, count, date, start, finish, bs, be, breakMinutes, brea
         totalWorkperDay.innerHTML = formatMinutes(worked);
         totalWorkperDay.style.fontWeight = "bold";
 
-        let action = row.insertCell(8);
+        let noteCell = row.insertCell(8);
+
+        noteCell.innerHTML = note || "⚪";
+        noteCell.style.fontSize = note ? "10px" : "auto";
+        noteCell.style.fontStyle = note ? "italic" : "normal";
+
+        // Text wrapping
+        noteCell.style.whiteSpace = "normal";
+        noteCell.style.wordBreak = "break-word";
+        noteCell.style.overflowWrap = "break-word";
+
+        let action = row.insertCell(9);
         action.innerHTML = ActionButtons(index, "auto");
 
         if (date === today) {
@@ -482,10 +601,11 @@ function clearForm() {
     const breakEndInput = document.getElementById("breakEnd");
     const hasBreakSelect = document.getElementById("hasBreak");
     const breakArea = document.getElementById("breakArea");
+    const noteInput = document.getElementById("note");
 
     saveButton.innerHTML = "Add Record";
 
-    [dateInput, startInput, finishInput, breakStartInput, breakEndInput, hasBreakSelect].forEach(input => {
+    [dateInput, startInput, finishInput, breakStartInput, breakEndInput, hasBreakSelect, noteInput].forEach(input => {
         if (input) {
             input.disabled = false;
             input.removeAttribute("readonly");
@@ -504,10 +624,7 @@ function clearForm() {
     breakStartInput.value = "";
     breakEndInput.value = "";
     hasBreakSelect.value = "no";
-
-    if (breakArea) {
-        breakArea.classList.add("hidden");
-    }
+    noteInput.value = "";
 
     setTimeout(() => {
         if (dateInput && document.contains(dateInput)) {
@@ -528,12 +645,12 @@ function updateMonthlySummary() {
 
     document.getElementById("totalBreak").innerHTML =
         formatMinutes(totalBreakGlobal);
-        const element = document.getElementById("workedHoursDisplay");
+    const element = document.getElementById("workedHoursDisplay");
 
     if (element) {
         element.innerHTML =
             `${(totalHoursGlobal / 60).toFixed(2)} h`;
     }
-    
+
 
 }

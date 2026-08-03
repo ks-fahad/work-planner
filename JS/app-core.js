@@ -75,7 +75,31 @@ function loadCalendar() {
 }
 
 window.onload = function () {
-    loadCalendar();
+    setTimeout(() => {
+        const container = document.querySelector(".container");
+
+        if (container) {
+            container.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }, 300);
+    let storedLoginCode = localStorage.getItem("loginCode");
+    let storedCurrentUser = localStorage.getItem("currentUser");
+    let loginStatus = localStorage.getItem("login");
+
+    if (storedLoginCode && storedCurrentUser === "true") {
+        password = storedLoginCode;
+        login();
+    }
+    else {
+        loadCalendar();
+        if (loginStatus) {
+            showMessage("✔ Logged out", "warning");
+            localStorage.removeItem("login");
+        }
+    }
 };
 
 // ===========================
@@ -228,3 +252,25 @@ window.addEventListener("resize", () => {
         showMonth();
     }, 200);
 });
+
+async function showConfirm(message) {
+    return new Promise(resolve => {
+
+        const modal = document.getElementById("confirmModal");
+        const text = document.getElementById("confirmMessage");
+
+        text.innerHTML = message;
+        modal.style.display = "flex";
+
+        document.getElementById("confirmYes").onclick = () => {
+            modal.style.display = "none";
+            resolve(true);
+        };
+
+        document.getElementById("confirmNo").onclick = () => {
+            modal.style.display = "none";
+            resolve(false);
+        };
+
+    });
+}
