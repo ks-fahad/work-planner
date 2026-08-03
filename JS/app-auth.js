@@ -3,7 +3,7 @@
 // LOGIN
 // ===========================
 
-let loginStatus = false;
+let loginStatus = "";
 
 function loginSuccess(passcode) {
     localStorage.setItem("loginCode", btoa([...passcode].map((c, i) => String.fromCharCode(c.charCodeAt(0) + i + 5)).reverse().join("")));
@@ -59,7 +59,7 @@ async function loadData() {
             atob(file.content)
         );
 
-        loginStatus = true;
+        loginStatus = "true";
         records = data;
 
         loadMonths();
