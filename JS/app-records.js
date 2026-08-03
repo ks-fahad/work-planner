@@ -614,8 +614,8 @@ function clearForm() {
         }
     });
 
-    if (breakArea) {
-        breakArea.style.display = "none";
+    if (breakArea.classList.contains("hidden") === false) {
+        breakArea.classList.add("hidden");
     }
 
     dateInput.value = "";
