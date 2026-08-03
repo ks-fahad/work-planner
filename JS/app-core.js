@@ -270,14 +270,14 @@ async function showConfirm(message) {
         // Disable background scrolling
         document.body.style.overflow = "hidden";
         const allMobileButtons = document.querySelectorAll(".actionButtonsToHide");
-        const noAndDatesToHide = document.querySelectorAll(".noAndDatesToHide");
+        const numberAndDatesToHide = document.querySelectorAll(".noAndDatesToHide");
 
-        if (allMobileButtons.length > 0 || noAndDatesToHide.length > 0) {
-            allMobileButtons.forEach(div => {
-                div.style.display = "none";
+        if (allMobileButtons.length > 0 && numberAndDatesToHide.length > 0) {
+            allMobileButtons.forEach(div1 => {
+                div1.style.display = "none";
             });
-            noAndDatesToHide.forEach(div => {
-                div.style.display = "none";
+            numberAndDatesToHide.forEach(div2 => {
+                div2.style.display = "none";
             });
         }
 
@@ -288,12 +288,12 @@ async function showConfirm(message) {
 
             // Re-enable scrolling
             document.body.style.overflow = "";
-            if (allMobileButtons.length > 0 || noAndDatesToHide.length > 0) {
-                allMobileButtons.forEach(div => {
-                    div.style.display = "flex";
+            if (allMobileButtons.length > 0 && numberAndDatesToHide.length > 0) {
+                allMobileButtons.forEach(div1 => {
+                    div1.style.display = "flex";
                 });
-                noAndDatesToHide.forEach(div => {
-                    div.style.display = "flex";
+                numberAndDatesToHide.forEach(div2 => {
+                    div2.style.display = "flex";
                 });
             }
 
@@ -305,12 +305,12 @@ async function showConfirm(message) {
 
             // Re-enable scrolling
             document.body.style.overflow = "";
-            if (allMobileButtons.length > 0 || noAndDatesToHide.length > 0) {
-                allMobileButtons.forEach(div => {
-                    div.style.display = "flex";
+            if (allMobileButtons.length > 0 && numberAndDatesToHide.length > 0) {
+                allMobileButtons.forEach(div1 => {
+                    div1.style.display = "flex";
                 });
-                noAndDatesToHide.forEach(div => {
-                    div.style.display = "flex";
+                numberAndDatesToHide.forEach(div2 => {
+                    div2.style.display = "flex";
                 });
             }
 
