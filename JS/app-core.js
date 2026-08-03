@@ -86,7 +86,7 @@ window.onload = function () {
     }
     else {
         loadCalendar();
-        if (!loginStatus) {
+        if (loginStatus === "false") {
             showMessage("✔ Logged out", "warning");
         }
     }
