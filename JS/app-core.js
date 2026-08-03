@@ -75,16 +75,7 @@ function loadCalendar() {
 }
 
 window.onload = function () {
-    setTimeout(() => {
-        const container = document.querySelector(".container");
-
-        if (container) {
-            container.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        }
-    }, 300);
+    goToUp();
     let storedLoginCode = localStorage.getItem("loginCode");
     let storedCurrentUser = localStorage.getItem("currentUser");
     let loginStatus = localStorage.getItem("login");
@@ -101,6 +92,19 @@ window.onload = function () {
         }
     }
 };
+
+function goToUp() {
+    setTimeout(() => {
+        const container = document.querySelector(".container");
+
+        if (container) {
+            container.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }, 300);
+}
 
 // ===========================
 // CONFIG / LOAD
@@ -254,21 +258,35 @@ window.addEventListener("resize", () => {
 });
 
 async function showConfirm(message) {
+    goToUp();
+
     return new Promise(resolve => {
 
         const modal = document.getElementById("confirmModal");
         const text = document.getElementById("confirmMessage");
 
         text.innerHTML = message;
+
+        // Disable background scrolling
+        document.body.style.overflow = "hidden";
+
         modal.style.display = "flex";
 
         document.getElementById("confirmYes").onclick = () => {
             modal.style.display = "none";
+
+            // Re-enable scrolling
+            document.body.style.overflow = "";
+
             resolve(true);
         };
 
         document.getElementById("confirmNo").onclick = () => {
             modal.style.display = "none";
+
+            // Re-enable scrolling
+            document.body.style.overflow = "";
+
             resolve(false);
         };
 
