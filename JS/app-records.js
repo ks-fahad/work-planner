@@ -51,17 +51,12 @@ async function saveRecord() {
         breakStart: startBreak ? encrypt(startBreak) : "",
         breakEnd: endBreak ? encrypt(endBreak) : "",
 
-        breakMinutes: encrypt(
-            result.breakMinutes
-        ),
+        breakMinutes: encrypt(result.breakMinutes),
 
-        breakType: encrypt(
-            result.breakType
-        ),
+        breakType: encrypt(result.breakType),
 
-        totalMinutes: encrypt(
-            result.total
-        ),
+        totalMinutes: encrypt(result.total),
+
         note: noteInput ? encrypt(noteInput) : ""
 
     };
@@ -494,11 +489,11 @@ function mobileView(body, count, date, start, finish, bs, be, breakMinutes, brea
 
         cell.innerHTML = `
 <div style="position:relative;margin-top:-10px;margin-bottom:1px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:black;z-index:10;">
-    <div style="display:flex; gap:2px; align-items:center;">
+    <div class="noAndDatesToHide" style="display:flex; gap:2px; align-items:center;">
         <span style="border-radius:25px;background:${weekColors[weekIndex % weekColors.length]};padding:2px 10px;box-shadow:0 2px 8px rgba(15,23,42,.12),0 10px 25px rgba(15,23,42,.08);color:#919191;border:1px solid white;font-weight:bold;">${date === today ? "✅" : count}</span>
         <span style="border-radius:25px;background:white;padding:2px 10px;box-shadow:0 2px 8px rgba(15,23,42,.12),0 10px 25px rgba(15,23,42,.08);border:1px solid ${weekColors[weekIndex % weekColors.length]};">${date === today ? "Today" : dateFormat(date)}</span>
     </div>
-    <div style="display:flex; align-items:center; margin:0; padding:0; gap:2px;">
+    <div class="actionButtonsToHide" style="display:flex; align-items:center; margin:0; padding:0; gap:2px;">
         <span>${ActionButtons(index, "custom")}</span>
     </div>
 </div>

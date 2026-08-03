@@ -77,18 +77,17 @@ function loadCalendar() {
 window.onload = function () {
     goToUp();
     let storedLoginCode = localStorage.getItem("loginCode");
-    let storedCurrentUser = localStorage.getItem("currentUser");
     let loginStatus = localStorage.getItem("login");
 
-    if (storedLoginCode && storedCurrentUser === "true") {
+    records = [];
+    if (storedLoginCode && loginStatus === "true") {
         password = [...atob(storedLoginCode)].reverse().map((c, i) => String.fromCharCode(c.charCodeAt(0) - i - 5)).join("");
         login();
     }
     else {
         loadCalendar();
-        if (loginStatus) {
+        if (!loginStatus) {
             showMessage("✔ Logged out", "warning");
-            localStorage.removeItem("login");
         }
     }
 };
@@ -265,10 +264,22 @@ async function showConfirm(message) {
         const modal = document.getElementById("confirmModal");
         const text = document.getElementById("confirmMessage");
 
+
         text.innerHTML = message;
 
         // Disable background scrolling
         document.body.style.overflow = "hidden";
+        const allMobileButtons = document.querySelectorAll(".actionButtonsToHide");
+        const noAndDatesToHide = document.querySelectorAll(".noAndDatesToHide");
+
+        if (allMobileButtons.length > 0 || noAndDatesToHide.length > 0) {
+            allMobileButtons.forEach(div => {
+                div.style.display = "none";
+            });
+            noAndDatesToHide.forEach(div => {
+                div.style.display = "none";
+            });
+        }
 
         modal.style.display = "flex";
 
@@ -277,6 +288,14 @@ async function showConfirm(message) {
 
             // Re-enable scrolling
             document.body.style.overflow = "";
+            if (allMobileButtons.length > 0 || noAndDatesToHide.length > 0) {
+                allMobileButtons.forEach(div => {
+                    div.style.display = "flex";
+                });
+                noAndDatesToHide.forEach(div => {
+                    div.style.display = "flex";
+                });
+            }
 
             resolve(true);
         };
@@ -286,6 +305,14 @@ async function showConfirm(message) {
 
             // Re-enable scrolling
             document.body.style.overflow = "";
+            if (allMobileButtons.length > 0 || noAndDatesToHide.length > 0) {
+                allMobileButtons.forEach(div => {
+                    div.style.display = "flex";
+                });
+                noAndDatesToHide.forEach(div => {
+                    div.style.display = "flex";
+                });
+            }
 
             resolve(false);
         };

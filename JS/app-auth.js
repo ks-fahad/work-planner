@@ -3,29 +3,27 @@
 // LOGIN
 // ===========================
 
-let currentUser = false;
+let loginStatus = false;
 
 function loginSuccess(passcode) {
-    localStorage.setItem("loginCode", btoa([...passcode].map((c, i) => String.fromCharCode(c.charCodeAt(0) + i + 5)).reverse().join(""))); 
-    localStorage.setItem("currentUser", true);
+    localStorage.setItem("loginCode", btoa([...passcode].map((c, i) => String.fromCharCode(c.charCodeAt(0) + i + 5)).reverse().join("")));
     localStorage.setItem("login", true);
-
 }
 
 function logout() {
     localStorage.removeItem("loginCode");
-    localStorage.removeItem("currentUser");
+    localStorage.setItem("login", false);
     location.reload();
 }
 
 async function login() {
     passwordInput = document.getElementById("passwordInput").value;
 
-    if (password == "" && passwordInput == null) {
+    if (!password && !passwordInput) {
         showMessage("❌ Password required", "error");
         return;
     }
-    else if (password == "") {
+    else if (password == "" && passwordInput != null) {
         password = passwordInput;
     }
 
@@ -36,8 +34,6 @@ async function login() {
         showMessage("✔ Configuration loaded", "success");
         showMessage("🔄 Loading work data...", "warning");
         await loadData();
-
-        if (!currentUser) return;
     }
     catch (error) {
         showMessage("❌ Login failed: " + error.message, "error");
@@ -49,22 +45,59 @@ async function login() {
 // LOAD JSON
 // ===========================
 
-function loadData() {
-    fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${GITHUB_FILE}`)
-        .then(r => r.json())
-        .then(data => {
-            currentUser = true;
-            records = data;
-            loadMonths();
-            showMonth();
-            document.getElementById("loginBox").classList.add("hidden");
-            document.getElementById("app").classList.remove("hidden");
-            document.getElementById("view-Details").classList.remove("hidden");
-            showMessage("✔ Planner opened successfully", "success");
-            if (!localStorage.getItem("loginCode")) loginSuccess(password);
-        })
-        .catch(() => {
-            records = [];
-            showMessage("❌ Invalid password", "error");
+async function loadData() {
+    try {
+        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}?t=${Date.now()}`;
+
+        const response = await fetch(url, {
+            cache: "no-store"
         });
+
+        const file = await response.json();
+
+        const data = JSON.parse(
+            atob(file.content)
+        );
+
+        loginStatus = true;
+        records = data;
+
+        loadMonths();
+        showMonth();
+
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("app").classList.remove("hidden");
+        document.getElementById("view-Details").classList.remove("hidden");
+
+        showMessage("✔ Planner opened successfully", "success");
+
+        if (!localStorage.getItem("loginCode")) {
+            loginSuccess(password);
+        }
+
+    } catch (error) {
+        currentUser = false;
+        showMessage("❌ Invalid password", "error");
+    }
 }
+
+// async function loadData() {
+//     fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${GITHUB_FILE}?t=${Date.now()}`)
+//         .then(r => r.json())
+//         .then(data => {
+//             loginStatus = true;
+//             records = data;
+//             loadMonths();
+//             showMonth();
+//             document.getElementById("loginBox").classList.add("hidden");
+//             document.getElementById("app").classList.remove("hidden");
+//             document.getElementById("view-Details").classList.remove("hidden");
+//             showMessage("✔ Planner opened successfully", "success");
+//             if (!localStorage.getItem("loginCode")) loginSuccess(password);
+//         })
+//         .catch(() => {
+//             currentUser = false;
+//             records = [];
+//             showMessage("❌ Invalid password", "error");
+//         });
+// }
