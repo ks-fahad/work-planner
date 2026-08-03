@@ -94,6 +94,7 @@ button:hover {
     display: flex;
     gap: 20px;
     width: 100%;
+    margin-top: 10px;
 }
 
 .time-field {
@@ -286,6 +287,33 @@ td:hover {
     box-sizing: border-box;
 }
 
+.about-List {
+    margin: 2px 5px 2px 0;
+    background: black;
+    color: white;
+    font-weight: bolder;
+    padding: 2px 4px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
 @media (max-width: 768px) {
 
     .wpillus-grid {
@@ -296,9 +324,11 @@ td:hover {
         height: 30px;
         border-radius: 8px;
     }
-    .wpillus-header{
+
+    .wpillus-header {
         gap: 6px;
     }
+
     .wpillus-header div {
         width: 60%;
         height: 14px;

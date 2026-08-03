@@ -101,7 +101,7 @@
 
                 <label>Date</label>
 
-                <input type="date" id="date">
+                <input type="date" id="date" style="min-height: 40px;">
 
                 <div class="time-row">
                     <div class="time-field">
@@ -116,23 +116,22 @@
                 </div>
 
 
+                <div style="margin-top: 10px;">
+                    <label>Break?</label>
 
-                <label>Break?</label>
+                    <select id="hasBreak" onchange="toggleBreak()">
 
-                <select id="hasBreak" onchange="toggleBreak()">
+                        <option value="no">
+                            No
+                        </option>
 
-                    <option value="no">
-                        No
-                    </option>
+                        <option value="yes">
+                            Yes
+                        </option>
 
-                    <option value="yes">
-                        Yes
-                    </option>
+                    </select>
 
-                </select>
-
-
-
+                </div>
 
                 <div id="breakArea" class="hidden">
                     <div class="time-row">
@@ -147,8 +146,10 @@
                         </div>
                     </div>
 
-
-
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>Note</label>
+                    <input type="text" id="note" placeholder="Enter note" style="min-height: 40px;">
                 </div>
 
 
@@ -206,6 +207,7 @@
                             <th>Break End</th>
                             <th>Break Time</th>
                             <th>Total Hours</th>
+                            <th>Note</th>
                             <th>Action</th>
 
 
@@ -307,7 +309,8 @@
 
             <div class="button-row" style="margin-bottom: 30px;">
                 <button onclick="saveToGitHub()" style="background: linear-gradient(135deg, #047857, #10B981);"
-                    onmouseover="this.style.background='#F97316'" onmouseout="this.style.background='linear-gradient(135deg, #047857, #10B981)'">
+                    onmouseover="this.style.background='#F97316'"
+                    onmouseout="this.style.background='linear-gradient(135deg, #047857, #10B981)'">
                     Confirm Save
                 </button>
 
@@ -315,41 +318,24 @@
                     Retry Save
                 </button>
 
-                <button onclick="location.reload();" class="danger">
+                <button onclick="logout();" class="danger">
                     Log Out
                 </button>
             </div>
         </div>
 
-        <div style="
-    text-align:center;
-    border-radius:10px;
-    color:#1F2937;
-    max-width:auto;
-    margin:auto;
-    padding:30px;
-    background:#FFFBEB;
-    
-">
+        <div
+            style="font-size: 12px; border-radius:10px;color:#1F2937;max-width:auto;margin:auto;padding:30px;background:#FFFBEB;">
 
-            <h1 style="
-        font-size:25px;
-        margin-bottom:8px;
-        letter-spacing:1px;
-    ">
+            <h1 style="font-size:20px;margin-bottom:8px;letter-spacing:1px;">
                 Work Planner - Your Personal Work Hours Tracker
             </h1>
 
-            <h3 style="
-        font-size:20px;
-        font-weight:300;
-        opacity:0.9;
-        margin-bottom:20px;
-    ">
+            <h3 style="font-size:16px;font-weight:300;opacity:0.9;margin-bottom:20px;text-align:center;">
                 Developed by <strong><i>@ks-fahad</i></strong>
             </h3>
 
-            <p>
+            <p style="text-align: justify;">
                 A simple and efficient application designed to help users track and
                 manage their working hours easily. Track daily working hours, calculate monthly total hours, monitor
                 break
@@ -360,11 +346,33 @@
                 their work history anytime and continue tracking without losing
                 previous information.
             </p>
+            <div id="view-Details" class="hidden">
+                <span class="about-List">1</span>
+                <strong>Login</strong> using your passcode.
+                <br />
+                <span class="about-List">2</span>
+                <strong>Add New Entry,</strong> to save an working hours in the database, first enter all required
+                information.
+                <br />
+                <span class="about-List">3</span>
+                <strong>Add Record,</strong> After entering all data, click on <u><i>Add Record</i></u> to create the
+                entry.
+                <br />
+                <span class="about-List">4</span>
+                <strong>Confirm Save,</strong> To permanently save the record to the database, <u><i>click Confirm
+                        Save</i></u>. The button is located below the month entry section.
+                <br />
+                <span class="about-List">5</span>
+                <strong>Additional Information and Features, </strong> The system provides additional options,
+                including:
+                <ul>
+                    <li>Monthly View and Summary</li>
+                    <li>Edit Hours or Delete Records by confirming the action</li>
+                    <li>Salary Calculation based on your contract hours and salary per hour</li>
 
-            <p style="
-        font-weight:bold;
-        margin-top:10px;
-    ">
+                </ul>
+            </div>
+            <p style="font-weight:bold;margin-top:10px;text-align:center;font-size: 12px;">
                 A complete solution for professional work tracking, monthly calculations,
                 and better time management.
             </p>
@@ -375,7 +383,16 @@
 
 
 
+    <div id="confirmModal" class="modal">
+        <div class="modal-box">
+            <p id="confirmMessage"></p>
+            <div class="button-row">
+                <button id="confirmYes" class="primary">Yes</button>
+                <button id="confirmNo" class="secondary">No</button>
+            </div>
 
+        </div>
+    </div>
 
 
 
