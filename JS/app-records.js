@@ -499,7 +499,9 @@ function mobileView(body, count, date, start, finish, bs, be, breakMinutes, brea
 </div>
 <div style="padding: 5px 8px 2px 8px; font-size: 15px">
     <div style="display:flex; justify-content:space-between;"><span style="font-weight:bold;">Work Hours</span><span style="font-weight:bold;">${start} - ${finish}</span></div>
-    ${(bs && be) ? `<div style="display:flex; justify-content:space-between;"><span style="font-style: italic;">Break</span><span style="font-style: italic;">${bs} - ${be} [${formatMinutes(breakMinutes)}]</span></div>` : (breakType === "Auto") ? `<div style="display:flex; justify-content:space-between;"><span style="font-style: italic;">Break</span><span style="font-style: italic;">⚙️ 30 m</span></div>` : ""}
+    ${(breakType !== "No") ? `<div style="display:flex; justify-content:space-between;"><span style="font-style: italic;">Break</span><span style="font-style: italic;">` : ""}
+
+    ${(breakType === "Have") ? `${bs} - ${be} [${formatMinutes(breakMinutes)}]</span></div>` : (breakType === "Auto") ? `⚙️ 30 m</span></div>` : (breakType === "Have + Auto1") ? `${bs} - ${be} [${formatMinutes(breakMinutes)} <sup style="font-size: 0.5em; font-weight: bold;">+1ST_S</sup>]</span></div>` : (breakType === "Have + Auto2") ? `${bs} - ${be} [${formatMinutes(breakMinutes)} <sup style="font-size: 0.5em; font-weight: bold;">+2ND_S</sup>]</span></div>`: ""}
     <div style="display:flex; justify-content:space-between;"><span style="font-weight:bold;">Total</span><span style="font-weight:bold;">${formatMinutes(worked)}</span></div>
 </div>
 <hr style="border:0;border-top: 1px dashed #aaa;margin: 8px 8px 2px 8px;">
@@ -532,6 +534,12 @@ ${note ? `<div style="padding: 2px 2px; margin: 2px 8px; font-size: 10px; text-a
         }
         else if (breakType === "Have") {
             breakTotalInfo.innerHTML = formatMinutes(breakMinutes);
+        }
+        else if (breakType === "Have + Auto1") {
+            breakTotalInfo.innerHTML = formatMinutes(breakMinutes) + '<sup style="font-size: 0.5em; font-weight: bold;">+1ST_S</sup>';
+        }
+        else if (breakType === "Have + Auto2") {
+            breakTotalInfo.innerHTML = formatMinutes(breakMinutes) + '<sup style="font-size: 0.5em; font-weight: bold;">+2ND_S</sup>';
         }
         else {
             breakTotalInfo.innerHTML = "⚪";

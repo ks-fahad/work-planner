@@ -177,10 +177,18 @@ function calculateWork() {
 
         if (bs && be) {
             breakMinutes = toMinutes(be) - toMinutes(bs);
-            if (breakMinutes < 0) {
-                breakMinutes += 1440;
-            }
             breakType = "Have";
+            let beforeBreak = toMinutes(bs) - toMinutes(start);
+            let afterBreak = toMinutes(finish) - toMinutes(be);
+            if (beforeBreak > 360 || afterBreak > 360) {
+                breakMinutes += 30;
+                if (beforeBreak > 360) {
+                    breakType = "Have + Auto1";
+                }
+                else{
+                    breakType = "Have + Auto2";
+                }
+            }
         }
     }
     else if (total > 360) {
