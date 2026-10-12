@@ -34,10 +34,24 @@ function showSalaryBlock() {
 
     }
 }
+function clearSalaryCalculationForm(){
+    document.getElementById("contractHours").value = "";
+    document.getElementById("reduceHours").value = "";
+    document.getElementById("salaryPerHour").value = "";
+    document.getElementById("taxPercent").value = "";
+    document.getElementById("extraPercent").value = "";
+}
 
 function checkExtraHours(totalHours) {
-    let workedHours = totalHours / 60;
     let contract = Number(document.getElementById("contractHours").value);
+    let reduceHours =  document.getElementById("reduceHours").value;
+    if (reduceHours == null || reduceHours === ""){
+        reduceHours = 0;
+    }else{
+        reduceHours = Number(reduceHours);
+    }
+    
+    let workedHours = (totalHours / 60) - reduceHours;
 
     if (workedHours > contract) {
         document.getElementById("extraBox").style.display = "block";
