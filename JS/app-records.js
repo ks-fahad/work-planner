@@ -578,6 +578,7 @@ ${note ? `<div style="padding: 2px 2px; margin: 2px 8px; font-size: 10px; text-a
         if(sickoff) {
             cellIndex.innerHTML = "sick";
             cellIndex.style.color = "red";
+            cellIndex.style.fontWeight = "bold";
         }
     }
 
