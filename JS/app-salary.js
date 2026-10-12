@@ -60,7 +60,7 @@ function calculateSalary(totalHours) {
         reduceHours = Number(reduceHours);
     }
     
-    let workedHours = (totalHours - reduceHours) / 60;
+    let workedHours = (totalHours / 60) - reduceHours;
 
     if (!Number.isFinite(contractHours) || !Number.isFinite(salaryPerHour) || !Number.isFinite(taxPercent) || contractHours <= 0 || salaryPerHour <= 0) {
         document.getElementById("salaryResult").innerHTML = `
