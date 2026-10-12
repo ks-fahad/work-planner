@@ -48,11 +48,13 @@ function checkExtraHours(totalHours) {
 }
 
 function calculateSalary(totalHours) {
-    let workedHours = totalHours / 60;
     let contractHours = Number(document.getElementById("contractHours").value);
+    let reduceHours =  Number(document.getElementById("reduceHours").value);
     let salaryPerHour = Number(document.getElementById("salaryPerHour").value);
     let taxPercent = Number(document.getElementById("taxPercent").value);
     let extraPercent = Number(document.getElementById("extraPercent").value || 100);
+    
+    let workedHours = (totalHours - reduceHours) / 60;
 
     if (!Number.isFinite(contractHours) || !Number.isFinite(salaryPerHour) || !Number.isFinite(taxPercent) || contractHours <= 0 || salaryPerHour <= 0) {
         document.getElementById("salaryResult").innerHTML = `
