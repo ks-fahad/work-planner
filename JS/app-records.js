@@ -471,9 +471,13 @@ function mobileView(body, count, date, start, finish, bs, be, breakMinutes, brea
     let table = document.querySelector(".table-container table");
     let today = new Date().toLocaleDateString("en-CA");
     let row = body.insertRow();
+    
     let sickoff = false;
-    if(/\\sickDay/.test(note)) sickoff = true;
-
+    if (/#sickDay/.test(note)) {
+        sickoff = true;
+        note = note.replace(/#sickDay/g, "").trim();
+    }
+    
     if (window.innerWidth < 745) {
         if (thead.style.display !== "none") {
             containerTable.style.webkitOverflowScrolling = "touch";
@@ -570,6 +574,10 @@ ${note ? `<div style="padding: 2px 2px; margin: 2px 8px; font-size: 10px; text-a
             dateCell.innerHTML = "Today";
         } else {
             cellIndex.innerHTML = count;
+        }
+        if(sickoff) {
+            cellIndex.innerHTML = "sick";
+            cellIndex.style.color = "red";
         }
     }
 
