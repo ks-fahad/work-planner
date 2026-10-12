@@ -49,10 +49,16 @@ function checkExtraHours(totalHours) {
 
 function calculateSalary(totalHours) {
     let contractHours = Number(document.getElementById("contractHours").value);
-    let reduceHours =  Number(document.getElementById("reduceHours").value);
+    let reduceHours =  document.getElementById("reduceHours").value;
     let salaryPerHour = Number(document.getElementById("salaryPerHour").value);
     let taxPercent = Number(document.getElementById("taxPercent").value);
     let extraPercent = Number(document.getElementById("extraPercent").value || 100);
+
+    if (reduceHours == null || reduceHours === ""){
+        reduceHours = 0;
+    }else{
+        reduceHours = Number(reduceHours);
+    }
     
     let workedHours = (totalHours - reduceHours) / 60;
 
