@@ -576,9 +576,8 @@ ${note ? `<div style="padding: 2px 2px; margin: 2px 8px; font-size: 10px; text-a
             cellIndex.innerHTML = count;
         }
         if(sickoff) {
-            cellIndex.innerHTML = "sick";
+            cellIndex.innerHTML = "<strong>sick</strong>";
             cellIndex.style.color = "red";
-            cellIndex.style.fontWeight = "bold";
         }
     }
 
