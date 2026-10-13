@@ -276,13 +276,13 @@
                                 Total Hours Worked:
                                 <strong id="workedHoursDisplay">
                                     {(totalHoursGlobal / 60).toFixed(2)} h
-                                </strong> <a onclick="clearSalaryCalculationForm()" style="display:inline-block; background:#dc3545; color:white; padding:8px 16px; border-radius:5px; text-decoration:none; cursor:pointer;">Clear</a>
+                                </strong> <a onclick="clearSalaryCalculationForm()" style="display:inline-block; background:#dc3545; color:white; padding:2px; border-radius:5px; text-decoration:none; cursor:pointer;">Clear</a>
                             </span> 
                             <input id="contractHours" type="number" placeholder="Contract Hours"
                                 oninput="checkExtraHours(totalHoursGlobal)"
                                 style="padding:10px;border-radius:8px;border:1px solid #ccc;">
                              <input id="reduceHours" type="number" placeholder="Reduce Hours(if Any)"
-                                 oninput="checkExtraHours(totalHoursGlobal)
+                                 oninput="checkExtraHours(totalHoursGlobal)"
                                 style="padding:10px;border-radius:8px;border:1px solid #ccc;">
                             <input id="salaryPerHour" type="number" placeholder="Salary Per Hour"
                                 style="padding:10px;border-radius:8px;border:1px solid #ccc;">
