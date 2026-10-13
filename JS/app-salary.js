@@ -42,23 +42,15 @@ function clearSalaryCalculationForm(){
     document.getElementById("extraPercent").value = "";
 }
 
-function checkExtraHours(totalHours) {
-    let contract = Number(document.getElementById("contractHours").value);
-    let reduceHours =  document.getElementById("reduceHours").value;
-    if (reduceHours == null || reduceHours === ""){
-        reduceHours = 0;
-    }else{
-        reduceHours = Number(reduceHours);
-    }
-    
-    let workedHours = (totalHours / 60) - reduceHours;
 
-    if (workedHours > contract) {
-        document.getElementById("extraBox").style.display = "block";
-    }
-    else {
-        document.getElementById("extraBox").style.display = "none";
-    }
+function checkExtraHours(totalHours) {
+    const contract = Number(document.getElementById("contractHours").value);
+    const reduceHours = Number(document.getElementById("reduceHours").value || 0);
+
+    const workedHours = (totalHours / 60) - reduceHours;
+
+    document.getElementById("extraBox").style.display =
+        workedHours > contract ? "block" : "none";
 }
 
 function calculateSalary(totalHours) {
