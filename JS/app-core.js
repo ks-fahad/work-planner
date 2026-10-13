@@ -122,7 +122,6 @@ async function loadConfig() {
         }
 
         config = await response.json();
-        console.log("Config loaded");
 
         GITHUB_USER = decrypt(config.githubUser);
         GITHUB_REPO = decrypt(config.githubRepo);
